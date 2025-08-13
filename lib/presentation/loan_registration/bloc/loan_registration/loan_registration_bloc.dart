@@ -1,15 +1,21 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:loan/core/util/network/data_state.dart';
+import 'package:loan/domain/entities/borrower/borrower_info/borrower_entity.dart';
+import 'package:loan/domain/entities/loan_registration/loan_registration_entity.dart';
+import 'package:loan/domain/use_case/loan_registration/loan_registration_use_case.dart';
+import 'package:loan/presentation/loan_registration/bloc/loan_registration/loan_registration_state.dart';
 
 part 'loan_registration_event.dart';
-part 'loan_registration_state.dart';
 
 class LoanRegistrationBloc
     extends Bloc<LoanRegistrationEvent, LoanRegistrationState> {
-  LoanRegistrationBloc()
+  final LoanRegistrationUseCase _useCase;
+
+  LoanRegistrationBloc(this._useCase)
       : super(const LoanRegistrationState(
           total: 0,
-          currentStep: 1, // 1-based
+          currentStep: 1,
           completed: [],
         )) {
     on<InitSteps>(_onInit);
@@ -17,12 +23,14 @@ class LoanRegistrationBloc
     on<NextStepsEvent>(_onNext);
     on<PrevStepsEvent>(_onPrev);
     on<MarkCompleted>(_onMarkCompleted);
+    on<SubmitBorrowerInfo>(_onSubmitBorrowerInfo);
+    on<SubmitLoanRegistration>(_onSubmitLoan);
   }
 
   void _onInit(InitSteps e, Emitter<LoanRegistrationState> emit) {
     final total = e.total.clamp(0, 50);
     final start0 = e.startAt.clamp(0, total == 0 ? 0 : total - 1);
-    final current1 = total == 0 ? 1 : start0 + 1; // convert to 1-based
+    final current1 = total == 0 ? 1 : start0 + 1;
     final list = List<bool>.filled(total, false);
 
     emit(state.copyWith(
@@ -32,6 +40,9 @@ class LoanRegistrationBloc
       stepLabel: _labelFor(current1),
       buttonLabel: _buttonFor(current1, total),
       completionPercentage: _percentFor(list, total),
+      status: LoanRegStatus.idle,
+      clearError: true,
+      clearRegistration: true,
     ));
   }
 
@@ -78,7 +89,64 @@ class LoanRegistrationBloc
     ));
   }
 
-  // --- helpers ---
+  Future<void> _onSubmitBorrowerInfo(
+    SubmitBorrowerInfo event,
+    Emitter<LoanRegistrationState> emit,
+  ) async {
+    emit(state.copyWith(
+      status: LoanRegStatus.loading,
+      clearError: true,
+      clearRegistration: true,
+    ));
+
+    final payload = LoanRegistrationEntity(
+      loanOfficerId: 'maine',
+      borrower: event.borrower,
+    );
+
+    final result = await _useCase(
+      LoanRegistrationIdParams(token: event.token, payload: payload),
+    );
+
+    if (result is DataSuccess<LoanRegistrationEntity>) {
+      emit(state.copyWith(
+        status: LoanRegStatus.success,
+        registration: result.data,
+      ));
+    } else if (result is DataFailed) {
+      emit(state.copyWith(
+        status: LoanRegStatus.failure,
+        error: result.error?.message ?? 'Something went wrong',
+      ));
+    }
+  }
+
+  Future<void> _onSubmitLoan(
+    SubmitLoanRegistration e,
+    Emitter<LoanRegistrationState> emit,
+  ) async {
+    emit(state.copyWith(
+      status: LoanRegStatus.loading,
+      clearError: true,
+      clearRegistration: true,
+    ));
+
+    final result = await _useCase(
+      LoanRegistrationIdParams(token: e.token, payload: e.payload),
+    );
+
+    if (result is DataSuccess<LoanRegistrationEntity>) {
+      emit(state.copyWith(
+        status: LoanRegStatus.success,
+        registration: result.data,
+      ));
+    } else if (result is DataFailed) {
+      emit(state.copyWith(
+        status: LoanRegStatus.failure,
+        error: result.error?.message ?? 'Failed',
+      ));
+    }
+  }
 
   String _buttonFor(int current1, int total) =>
       current1 >= total ? 'Submit' : 'Next';
@@ -91,7 +159,6 @@ class LoanRegistrationBloc
       'Declarations',
       'Demographics',
     ];
-    // Guard in case total != labels.length
     final idx = (current1 - 1).clamp(0, labels.length - 1);
     return labels[idx];
   }

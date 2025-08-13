@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:loan/domain/use_case/loan_registration/loan_registration_use_case.dart';
 import 'package:loan/presentation/assets/form_controllers/asset_form_controllers.dart';
 
 import 'package:loan/presentation/loan_registration/bloc/loan_registration/loan_registration_bloc.dart';
@@ -74,8 +75,10 @@ class _LoanRegistrationScreenState extends State<LoanRegistrationScreen>
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      // initialize steps right away
-      create: (_) => LoanRegistrationBloc()..add(const InitSteps(total: 5)),
+      // initialize steps
+      create: (_) => LoanRegistrationBloc(
+        sl<LoanRegistrationUseCase>(),
+      )..add(const InitSteps(total: 5)),
       child: BlocListener<LoanRegistrationBloc, LoanRegistrationState>(
         listener: (context, state) {
           final target = (state.currentStep - 1).clamp(0, _tabs.length - 1);
@@ -160,6 +163,12 @@ class _LoanRegistrationScreenState extends State<LoanRegistrationScreen>
                 financialFormKey: financialFormKey,
                 declarationFormKey: declarationFormKey,
                 demographicFormKey: demographicFormKey,
+
+                borrowerCtrls: borrowerCtrls,
+                propertyCtrls: propertyCtrls,
+                financialCtrl: financialCtrl,
+                declarationCtrls: declarationCtrls,
+                demographicsCtrls: demographicsCtrls,
               ),
             );
           },
@@ -180,6 +189,13 @@ class _BottomNavBar extends StatelessWidget {
   final GlobalKey<FormState> declarationFormKey;
   final GlobalKey<FormState> demographicFormKey;
 
+  // NEW: controllers
+  final BorrowerInfoFormControllers borrowerCtrls;
+  final PropertyInfoFormControllers propertyCtrls;
+  final AssetFormControllers financialCtrl;
+  final DeclarationInfoFormControllers declarationCtrls;
+  final DemographicsFormControllers demographicsCtrls;
+
   const _BottomNavBar({
     required this.isFirst,
     required this.nextLabel,
@@ -189,6 +205,11 @@ class _BottomNavBar extends StatelessWidget {
     required this.financialFormKey,
     required this.declarationFormKey,
     required this.demographicFormKey,
+    required this.borrowerCtrls,
+    required this.propertyCtrls,
+    required this.financialCtrl,
+    required this.declarationCtrls,
+    required this.demographicsCtrls,
   });
 
   @override
@@ -220,7 +241,7 @@ class _BottomNavBar extends StatelessWidget {
           color: Colors.white,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 16,
               offset: const Offset(0, -6),
             ),
@@ -237,8 +258,8 @@ class _BottomNavBar extends StatelessWidget {
                     Navigator.maybePop(context);
                   } else {
                     context.read<LoanRegistrationBloc>().add(
-                      const PrevStepsEvent(),
-                    );
+                          const PrevStepsEvent(),
+                        );
                   }
                 },
                 backgroundColor: Colors.white,
@@ -256,17 +277,18 @@ class _BottomNavBar extends StatelessWidget {
 
                   final bloc = context.read<LoanRegistrationBloc>();
                   final isLast = bloc.state.currentStep == bloc.state.total;
+                  const token = 'YOUR_JWT_TOKEN_HERE';
 
                   if (isLast) {
-                    bloc.add(
-                      MarkCompleted(
-                        bloc.state.currentStep - 1,
-                        completed: true,
-                      ),
-                    );
+                    // Build the full payload from controllers
+                    // final payload = buildLoanRegistrationPayload(
+                    //   borrowerCtrls: context.findAncestorStateOfType<_LoanRegistrationScreenState>()!.borrowerCtrls,
+                    //   propertyCtrls: context.findAncestorStateOfType<_LoanRegistrationScreenState>()!.propertyCtrls,
+                    //   financialCtrl: context.findAncestorStateOfType<_LoanRegistrationScreenState>()!.financialCtrl,
+                    //   // add declarationCtrls / demographicsCtrls if needed
+                    // );
 
-                    await showSubmitSuccessDialog(context);
-                    if (!context.mounted) return;
+                    //bloc.add(SubmitLoanRegistration(token: token, payload: payload));
                     return;
                   }
 

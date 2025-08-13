@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:loan/domain/entities/assets/asset_item_entity.dart'
-    show AssetItem;
+import 'package:loan/domain/entities/financial_assets/asset_entity.dart';
 import 'package:loan/presentation/assets/screens/asset_form_screen.dart';
 import 'package:loan/presentation/widgets/ui/button_outlined.dart';
 import 'package:loan/presentation/widgets/ui/section_header_bar.dart';
@@ -13,34 +12,29 @@ class AssetsSection extends StatefulWidget {
 }
 
 class _AssetsSectionState extends State<AssetsSection> {
-  final List<AssetItem> _assets = const [
-    AssetItem(
-      owner: 'John Doe',
-      bank: 'US BANK',
-      type: 'Checking Account',
-      accountNumber: '1234',
-      value: '\$12,503.81',
-    ),
+  final List<AssetEntity> _assets = const [
+    AssetEntity(),
   ].toList();
 
-  Future<void> _handleAddAsset(BuildContext context) async {
+  Future<void> _handleAddAsset() async {
     final choice = await showDialog<String>(
       context: context,
-      builder: (_) => const _AddOptionsDialog(
+      builder: (dialogCtx) => const _AddOptionsDialog(
         title: 'Add Asset Options',
         primaryText: 'E‑Verify',
         secondaryText: 'Manual Add',
       ),
     );
-    if (choice == null) return;
 
-    final result = await Navigator.push<AssetItem>(
-      context,
+    if (!mounted || choice == null) return;
+
+    final result = await Navigator.of(context).push<AssetEntity>(
       MaterialPageRoute(builder: (_) => const AssetFormScreen()),
     );
-    if (result != null && mounted) {
-      setState(() => _assets.add(result));
-    }
+
+    if (!mounted || result == null) return;
+
+    setState(() => _assets.add(result));
   }
 
   @override
@@ -48,7 +42,7 @@ class _AssetsSectionState extends State<AssetsSection> {
     return _AssetsContainer(
       header: const _AssetsHeader(),
       list: _AssetsList(items: _assets),
-      addButton: _AddAssetButton(onPressed: () => _handleAddAsset(context)),
+      addButton: _AddAssetButton(onPressed: () => _handleAddAsset()),
     );
   }
 }
@@ -107,7 +101,7 @@ class _AssetsHeader extends StatelessWidget {
 }
 
 class _AssetsList extends StatelessWidget {
-  final List<AssetItem> items;
+  final List<AssetEntity> items;
   const _AssetsList({required this.items});
 
   @override
@@ -126,7 +120,7 @@ class _AssetsList extends StatelessWidget {
 }
 
 class _AssetCard extends StatelessWidget {
-  final AssetItem item;
+  final AssetEntity item;
   const _AssetCard({required this.item});
 
   @override

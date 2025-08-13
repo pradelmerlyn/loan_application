@@ -24,6 +24,29 @@ class _EmploymentSectionState extends State<EmploymentSection> {
     ),
   ];
 
+  Future<void> _handleAdd() async {
+    // 1) Show options dialog
+    final choice = await _showAddOptions(
+      context,
+      title: 'Add Employment Options',
+      primaryText: 'E‑Verify',
+      secondaryText: 'Manual Add',
+    );
+
+    // After an await, ALWAYS guard context usage
+    if (!mounted || choice == null) return;
+
+    // 2) Navigate to the form
+    final result = await Navigator.of(context).push<EmploymentItem>(
+      MaterialPageRoute(builder: (_) => const EmploymentFormScreen()),
+    );
+
+    if (!mounted || result == null) return;
+
+    // 3) Update UI
+    setState(() => _items.add(result));
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -38,25 +61,7 @@ class _EmploymentSectionState extends State<EmploymentSection> {
         children: [
           const SectionHeaderBar(title: 'Employment Information'),
           _EmploymentList(items: _items),
-          _AddEmploymentButton(
-            onAdd: () async {
-              final choice = await _showAddOptions(
-                context,
-                title: 'Add Employment Options',
-                primaryText: 'E‑Verify',
-                secondaryText: 'Manual Add',
-              );
-              if (choice == null) return;
-
-              final result = await Navigator.push<EmploymentItem>(
-                context,
-                MaterialPageRoute(builder: (_) => const EmploymentFormScreen()),
-              );
-              if (result != null && mounted) {
-                setState(() => _items.add(result));
-              }
-            },
-          ),
+          _AddEmploymentButton(onAdd: _handleAdd),
         ],
       ),
     );
@@ -114,11 +119,10 @@ class _EmploymentCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Row 1: Employer + badge + menu (menu stays at far right)
+          // Row 1: Employer + badge + menu
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // employer + badge
               Expanded(
                 child: Wrap(
                   spacing: 8,
@@ -158,18 +162,16 @@ class _EmploymentCard extends StatelessWidget {
               const Icon(Icons.more_vert, size: 22),
             ],
           ),
-
           const SizedBox(height: 8),
 
-          // Row 2: job type – since
+          // Row 2
           Text(
             '${item.jobType} - ${item.since}',
             style: TextStyle(color: theme.hintColor),
           ),
-
           const SizedBox(height: 4),
 
-          // Row 3: John Doe (left) + amount (right)
+          // Row 3
           Row(
             children: [
               Expanded(
@@ -238,7 +240,7 @@ Future<String?> _showAddOptions(
               child: Text(
                 title,
                 style: Theme.of(
-                  context,
+                  dCtx,
                 ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
               ),
             ),

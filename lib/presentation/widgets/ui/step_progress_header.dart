@@ -1,4 +1,4 @@
-/// step_progress_header.dart
+
 import 'package:flutter/material.dart';
 
 class StepProgressHeader extends StatelessWidget {
@@ -115,7 +115,7 @@ class _StepDot extends StatelessWidget {
         border: Border.all(color: border, width: 3),
         boxShadow: bg == Colors.transparent
             ? null
-            : [BoxShadow(color: Colors.black.withOpacity(.10), blurRadius: 6)],
+            : [BoxShadow(color: Colors.black.withValues(alpha: 0.10), blurRadius: 6)],
       ),
       child: Icon(icon, color: iconColor, size: 22),
     );

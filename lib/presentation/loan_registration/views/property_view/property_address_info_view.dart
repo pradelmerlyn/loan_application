@@ -61,8 +61,9 @@ class _YearBuiltField extends StatelessWidget {
         if (t.isEmpty) return 'Year built is required';
         final y = int.tryParse(t);
         final now = DateTime.now().year;
-        if (y == null || y < 1800 || y > now)
+        if (y == null || y < 1800 || y > now) {
           return 'Enter a valid year (1800–$now)';
+        }
         return null;
       },
     );

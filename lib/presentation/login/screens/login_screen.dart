@@ -37,7 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     _Header(),
                     _Login(),
                     const SizedBox(height: 24),
-                    _LoginButtons(),
+                    const _LoginButtons(),
                   ],
                 ),
               ),

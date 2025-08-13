@@ -2,16 +2,13 @@
 import 'package:flutter/material.dart';
 import 'package:loan/presentation/bankruptcy_details/screens/bankcruptcy_screen.dart';
 import 'package:loan/presentation/loan_registration/form_controllers/declaration_info_form_controllers.dart';
-
-import 'package:loan/presentation/widgets/ui/section_header.dart';
-import 'package:loan/presentation/widgets/ui/question_card.dart';
-import 'package:loan/presentation/widgets/ui/inset_card.dart';
-
-import 'package:loan/presentation/widgets/form_fields/toggle_switch.dart';
 import 'package:loan/presentation/widgets/form_fields/dropdown_field.dart';
-import 'package:loan/presentation/widgets/form_fields/form_textfield.dart';
 import 'package:loan/presentation/widgets/form_fields/form_date_field.dart';
+import 'package:loan/presentation/widgets/form_fields/form_textfield.dart';
+import 'package:loan/presentation/widgets/form_fields/toggle_switch.dart';
 import 'package:loan/presentation/widgets/ui/button_outlined.dart';
+import 'package:loan/presentation/widgets/ui/inset_card.dart';
+import 'package:loan/presentation/widgets/ui/question_card.dart';
 
 class DeclarationInfoSection extends StatelessWidget {
   final DeclarationInfoFormControllers ctrls;
@@ -37,8 +34,6 @@ class DeclarationInfoSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final primary = theme.colorScheme.primary;
 
     return Padding(
       padding: const EdgeInsets.all(16),
@@ -448,7 +443,7 @@ class _BankruptcyCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.black.withOpacity(.08)),
+        border: Border.all(color: Colors.black.withValues(alpha: 0.08)),
       ),
       child: const Column(
         crossAxisAlignment: CrossAxisAlignment.start,

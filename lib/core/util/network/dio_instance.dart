@@ -90,15 +90,18 @@ class DioInstance {
     String? token,
   }) async {
     debugPrint('-- _requestInterceptor --');
-    options.contentType = 'application/json';
-    options.headers['Accept'] = 'application/json';
 
+    // Base content negotiation
     options.headers['Accept'] = 'application/json';
     options.contentType = 'application/json';
+
+    // auth header token
+    if (token != null && token.isNotEmpty) {
+      options.headers['Authorization'] = 'Bearer $token';
+    }
 
     debugPrint(options.headers.toString());
     debugPrint('--  --');
-
     return handler.next(options);
   }
 
