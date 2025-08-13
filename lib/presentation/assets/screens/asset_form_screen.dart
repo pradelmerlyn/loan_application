@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:loan/domain/entities/assets/asset_item_entity.dart'; // AssetItem
+import 'package:loan/domain/entities/financial_assets/asset_entity.dart';
 import 'package:loan/presentation/assets/form_controllers/asset_form_controllers.dart';
 import 'package:loan/presentation/widgets/form_fields/form_textfield.dart';
 
@@ -28,13 +28,7 @@ class _AssetFormScreenState extends State<AssetFormScreen> {
   Future<void> _save() async {
     if (!(_assetCtrls.assetFormKey.currentState?.validate() ?? false)) return;
 
-    final item = AssetItem(
-      owner: _assetCtrls.ownerCrtl.text.trim(),
-      bank: _assetCtrls.financialInstitutionNameCrtl.text.trim(),
-      type: _assetCtrls.assetTypeCrtl.text.trim(),
-      accountNumber: _assetCtrls.accountNumberCrtl.text.trim(),
-      value: _assetCtrls.cashMarketValueCrtl.text.trim(),
-    );
+    const item = AssetEntity();
 
     await showDialog<void>(
       context: context,

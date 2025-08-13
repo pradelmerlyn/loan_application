@@ -18,10 +18,10 @@ class AppCheckTile extends StatelessWidget {
     const brandBlue = Color(0xFF2E43DA);
     const borderColor = Color.fromRGBO(0, 0, 0, 0.30);
 
-    Color _fill(Set<WidgetState> s) =>
+    Color fill(Set<WidgetState> s) =>
         s.contains(WidgetState.selected) ? brandBlue : Colors.white;
 
-    Color _check(Set<WidgetState> s) =>
+    Color check(Set<WidgetState> s) =>
         s.contains(WidgetState.selected) ? Colors.white : Colors.transparent;
 
     final theme = Theme.of(context);
@@ -29,12 +29,12 @@ class AppCheckTile extends StatelessWidget {
     return Theme(
       data: theme.copyWith(
         checkboxTheme: CheckboxThemeData(
-          fillColor: WidgetStateProperty.resolveWith(_fill),
-          checkColor: WidgetStateProperty.resolveWith(_check),
+          fillColor: WidgetStateProperty.resolveWith(fill),
+          checkColor: WidgetStateProperty.resolveWith(check),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(6),
           ),
-          side: const BorderSide(color: borderColor, width: 1.4), // ✅ fixed
+          side: const BorderSide(color: borderColor, width: 1.4), 
           visualDensity: const VisualDensity(horizontal: -2, vertical: -3),
         ),
       ),
