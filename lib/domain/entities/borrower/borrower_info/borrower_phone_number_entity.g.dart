@@ -1,21 +1,21 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'borrower_home_phone_number_model.dart';
+part of 'borrower_phone_number_entity.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-BorrowerHomePhoneNumberModel _$BorrowerHomePhoneNumberModelFromJson(
+BorrowerPhoneNumberEntity _$BorrowerPhoneNumberEntityFromJson(
         Map<String, dynamic> json) =>
-    BorrowerHomePhoneNumberModel(
-      id: json['id'] as String?,
+    BorrowerPhoneNumberEntity(
       number: json['number'] as String?,
+      type: json['type'] as String?,
     );
 
-Map<String, dynamic> _$BorrowerHomePhoneNumberModelToJson(
-        BorrowerHomePhoneNumberModel instance) =>
+Map<String, dynamic> _$BorrowerPhoneNumberEntityToJson(
+        BorrowerPhoneNumberEntity instance) =>
     <String, dynamic>{
-      'id': instance.id,
       'number': instance.number,
+      'type': instance.type,
     };

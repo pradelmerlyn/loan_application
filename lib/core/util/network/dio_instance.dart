@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +12,7 @@ class DioInstance {
     bool bypassRefreshToken = false,
     bool implementTimeout = false,
     ResponseType? responseType = ResponseType.json,
-    String? token,
+    String? token = 'c8cdebbd255f6e5e17b048e6d8c1eff5cbfb3f175be9d35ca1d6fedfcc1388fe',
   }) {
     if (bypassRefreshToken) {
       assert(token != null);
@@ -54,21 +55,11 @@ class DioInstance {
         'options.queryParameters: ${options.queryParameters.toString()}',
       );
       debugPrint('options.headers: ${options.headers.toString()}');
-
-      if (options.data.runtimeType == FormData) {
-        FormData formData = options.data;
-        // debugPrint('options.data: ${formData.fields.toList().toString()}',
-        //     wrapWidth: 1024);
-        for (var element in formData.files) {
-          debugPrint(' -- options.files: ${element.key}');
-          debugPrint(' -- : ${element.value.filename}');
-          debugPrint(' -- : ${element.value.length / 1000000} MB');
-          debugPrint(' -- : ${element.value.contentType}');
-          debugPrint(' -- : ${element.value.headers}');
-        }
-      } else {
-        debugPrint('options.data: ${options.data.toString()}');
-      }
+      debugPrint('-- 🍎🍎🍎🍎🍎🍎 --');
+      //debugPrint('options.data: ${options.data.toString()}');
+      // final jsonStr =
+      //         const JsonEncoder.withIndent('  ').convert(options.data);
+      //     print(jsonStr); // full pretty-printed JSON
       debugPrint('--  --');
       _requestInterceptor(
         options,
@@ -97,7 +88,7 @@ class DioInstance {
 
     // auth header token
     if (token != null && token.isNotEmpty) {
-      options.headers['Authorization'] = 'Bearer $token';
+      options.headers['X-API-KEY'] = token;
     }
 
     debugPrint(options.headers.toString());

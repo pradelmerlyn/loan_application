@@ -30,7 +30,7 @@ class PropertyInfoSection extends StatelessWidget {
           const SizedBox(height: 16),
           _NumberOfUnitsField(ctrl: ctrls.numberOfUnits),
           const SizedBox(height: 16),
-          _PropertyUsageField(ctrl: ctrls.propertyUsage),
+          _PropertyUsageField(ctrl: ctrls.intendedUsageType),
           const SizedBox(height: 16),
           _EstimatedDownPaymentField(ctrl: ctrls.estimatedDownPayment),
         ],

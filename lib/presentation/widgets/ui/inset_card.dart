@@ -11,7 +11,7 @@ class InsetCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.black.withValues(alpha: 0.08)),
+        border: Border.all(color: Colors.black.withOpacity(0.08)),
       ),
       child: child,
     );

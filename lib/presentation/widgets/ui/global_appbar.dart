@@ -52,7 +52,7 @@ class GlobalAppbar extends StatelessWidget implements PreferredSizeWidget {
                 child: Text(
                   subtitle!,
                   style: TextStyle(
-                    color: titleColor.withValues(alpha: 0.92),
+                    color: titleColor.withOpacity(0.92),
                     fontSize: 12.5,
                     fontWeight: FontWeight.normal,
                   ),

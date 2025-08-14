@@ -8,7 +8,7 @@ class PropertyInfoFormControllers {
   final TextEditingController isPartOfHoa;
   final TextEditingController propertyType;
   final TextEditingController numberOfUnits;
-  final TextEditingController propertyUsage;
+  final TextEditingController intendedUsageType;
   final TextEditingController estimatedDownPayment;
 
 
@@ -31,7 +31,7 @@ class PropertyInfoFormControllers {
     required this.isPartOfHoa,
     required this.propertyType,
     required this.numberOfUnits,
-    required this.propertyUsage,
+    required this.intendedUsageType,
     required this.estimatedDownPayment,
     required this.yearBuiltCtrl,
     required this.propAddressLine1Ctrl,
@@ -60,7 +60,7 @@ class PropertyInfoFormControllers {
       numberOfUnits: TextEditingController(
         text: '',
       ),
-      propertyUsage: TextEditingController(
+      intendedUsageType: TextEditingController(
         text: '',
       ),
       estimatedDownPayment: TextEditingController(
@@ -96,7 +96,7 @@ class PropertyInfoFormControllers {
     isPartOfHoa.dispose();
     propertyType.dispose();
     numberOfUnits.dispose();
-    propertyUsage.dispose();
+    intendedUsageType.dispose();
     estimatedDownPayment.dispose();
     yearBuiltCtrl.dispose();
     propAddressLine1Ctrl.dispose();

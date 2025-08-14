@@ -6,7 +6,7 @@ part 'borrower_current_address_model.g.dart';
 @JsonSerializable()
 class BorrowerCurrentAddressModel extends BorrowerCurrentAddressEntity {
   const BorrowerCurrentAddressModel({
-    super.id,
+   // super.id,
     super.line,
     super.line2,
     super.city,
@@ -23,7 +23,7 @@ class BorrowerCurrentAddressModel extends BorrowerCurrentAddressEntity {
     BorrowerCurrentAddressEntity entity,
   ) =>
       BorrowerCurrentAddressModel(
-        id: entity.id,
+       // id: entity.id,
         line: entity.line,
         line2: entity.line2,
         city: entity.city,
@@ -38,7 +38,7 @@ class BorrowerCurrentAddressModel extends BorrowerCurrentAddressEntity {
 
   @override
   List<Object?> get props => [
-        id,
+      //  id,
         line,
         line2,
         city,

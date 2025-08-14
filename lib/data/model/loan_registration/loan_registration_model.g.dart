@@ -28,7 +28,7 @@ LoanRegistrationModel _$LoanRegistrationModelFromJson(
           ? null
           : PropertyModel.fromJson(
               json['subjectProperty'] as Map<String, dynamic>),
-      loanAmount: (json['loanAmount'] as num?)?.toDouble(),
+      loanAmount: json['loanAmount'] as num?,
       refinanceCashOutDeterminationType:
           json['refinanceCashOutDeterminationType'] as String?,
       desiredCashOut: (json['desiredCashOut'] as num?)?.toDouble(),
@@ -41,12 +41,12 @@ Map<String, dynamic> _$LoanRegistrationModelToJson(
       'loanOfficerId': instance.loanOfficerId,
       'branchId': instance.branchId,
       'id': instance.id,
-      'borrower': instance.borrower,
-      'coBorrower': instance.coBorrower,
-      'assets': instance.assets,
+      'borrower': instance.borrower?.toJson(),
+      'coBorrower': instance.coBorrower?.toJson(),
+      'assets': instance.assets?.map((e) => e.toJson()).toList(),
       'loanPurpose': instance.loanPurpose,
       'subjectPropertyFoundIndicator': instance.subjectPropertyFoundIndicator,
-      'subjectProperty': instance.subjectProperty,
+      'subjectProperty': instance.subjectProperty?.toJson(),
       'loanAmount': instance.loanAmount,
       'refinanceCashOutDeterminationType':
           instance.refinanceCashOutDeterminationType,

@@ -2,24 +2,26 @@ import 'package:flutter/material.dart';
 
 class ButtonOutlined extends StatelessWidget {
   final String label;
-  final VoidCallback onPressed;
+  final void Function()? onPressed;
   final Color backgroundColor;
   final Color foregroundColor;
   final Color? borderColor;
   final double? width;
   final bool useFullWidth;
   final Widget? leading;
+  final Widget? trailing;
 
   const ButtonOutlined({
     super.key,
     required this.label,
-    required this.onPressed,
+    this.onPressed,
     required this.backgroundColor,
     required this.foregroundColor,
     this.borderColor,
     this.width,
     this.useFullWidth = true,
     this.leading,
+    this.trailing, // ✅ Added
   });
 
   @override
@@ -48,6 +50,10 @@ class ButtonOutlined extends StatelessWidget {
             const SizedBox(width: 8),
           ],
           Text(label),
+          if (trailing != null) ...[
+            const SizedBox(width: 8),
+            trailing!,
+          ],
         ],
       ),
     );
