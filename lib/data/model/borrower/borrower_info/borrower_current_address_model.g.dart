@@ -9,7 +9,6 @@ part of 'borrower_current_address_model.dart';
 BorrowerCurrentAddressModel _$BorrowerCurrentAddressModelFromJson(
         Map<String, dynamic> json) =>
     BorrowerCurrentAddressModel(
-      id: json['id'] as String?,
       line: json['line'] as String?,
       line2: json['line2'] as String?,
       city: json['city'] as String?,
@@ -29,7 +28,6 @@ BorrowerCurrentAddressModel _$BorrowerCurrentAddressModelFromJson(
 Map<String, dynamic> _$BorrowerCurrentAddressModelToJson(
         BorrowerCurrentAddressModel instance) =>
     <String, dynamic>{
-      'id': instance.id,
       'line': instance.line,
       'line2': instance.line2,
       'city': instance.city,

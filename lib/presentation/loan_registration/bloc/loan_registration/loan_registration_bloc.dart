@@ -3,17 +3,27 @@ import 'package:equatable/equatable.dart';
 import 'package:loan/core/util/network/data_state.dart';
 import 'package:loan/domain/entities/borrower/borrower_info/borrower_entity.dart';
 import 'package:loan/domain/entities/loan_registration/loan_registration_entity.dart';
-import 'package:loan/domain/use_case/loan_registration/loan_registration_use_case.dart';
+
+// ✅ two distinct use cases (and their params)
+import 'package:loan/domain/use_case/borrower_registration/submit_borrower_use_case.dart'
+    show SubmitBorrowerUseCase, SubmitBorrowerParams;
+
+import 'package:loan/domain/use_case/loan_registration/submit_loan_use_case.dart'
+    show SubmitLoanUseCase, SubmitApplicationParams;
+
 import 'package:loan/presentation/loan_registration/bloc/loan_registration/loan_registration_state.dart';
 
 part 'loan_registration_event.dart';
 
 class LoanRegistrationBloc
     extends Bloc<LoanRegistrationEvent, LoanRegistrationState> {
-  final LoanRegistrationUseCase _useCase;
+  final SubmitBorrowerUseCase submitBorrowerUseCase;
+  final SubmitLoanUseCase submitApplicationUseCase;
 
-  LoanRegistrationBloc(this._useCase)
-      : super(const LoanRegistrationState(
+  LoanRegistrationBloc({
+    required this.submitBorrowerUseCase,
+    required this.submitApplicationUseCase,
+  }) : super(const LoanRegistrationState(
           total: 0,
           currentStep: 1,
           completed: [],
@@ -89,6 +99,8 @@ class LoanRegistrationBloc
     ));
   }
 
+  // ---------- API calls ----------
+
   Future<void> _onSubmitBorrowerInfo(
     SubmitBorrowerInfo event,
     Emitter<LoanRegistrationState> emit,
@@ -99,24 +111,20 @@ class LoanRegistrationBloc
       clearRegistration: true,
     ));
 
-    final payload = LoanRegistrationEntity(
-      loanOfficerId: 'maine',
-      borrower: event.borrower,
+    // ✅ FIX: pass the correct named param
+    final res = await submitBorrowerUseCase(
+      SubmitBorrowerParams(borrower: event.borrower),
     );
 
-    final result = await _useCase(
-      LoanRegistrationIdParams(token: event.token, payload: payload),
-    );
-
-    if (result is DataSuccess<LoanRegistrationEntity>) {
+    if (res is DataSuccess<LoanRegistrationEntity>) {
       emit(state.copyWith(
         status: LoanRegStatus.success,
-        registration: result.data,
+        registration: res.data,
       ));
-    } else if (result is DataFailed) {
+    } else if (res is DataFailed) {
       emit(state.copyWith(
         status: LoanRegStatus.failure,
-        error: result.error?.message ?? 'Something went wrong',
+        error: res.error?.message ?? 'Failed to submit borrower',
       ));
     }
   }
@@ -131,22 +139,25 @@ class LoanRegistrationBloc
       clearRegistration: true,
     ));
 
-    final result = await _useCase(
-      LoanRegistrationIdParams(token: e.token, payload: e.payload),
+    // ✅ Ensure you’re importing + using SubmitApplicationParams from submit_loan_use_case.dart
+    final res = await submitApplicationUseCase(
+      SubmitApplicationParams(payload: e.payload),
     );
 
-    if (result is DataSuccess<LoanRegistrationEntity>) {
+    if (res is DataSuccess<LoanRegistrationEntity>) {
       emit(state.copyWith(
         status: LoanRegStatus.success,
-        registration: result.data,
+        registration: res.data,
       ));
-    } else if (result is DataFailed) {
+    } else if (res is DataFailed) {
       emit(state.copyWith(
         status: LoanRegStatus.failure,
-        error: result.error?.message ?? 'Failed',
+        error: res.error?.message ?? 'Failed to submit application',
       ));
     }
   }
+
+  // ---------- helpers ----------
 
   String _buttonFor(int current1, int total) =>
       current1 >= total ? 'Submit' : 'Next';

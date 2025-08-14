@@ -16,7 +16,7 @@ class _AssetFormScreenState extends State<AssetFormScreen> {
   @override
   void initState() {
     super.initState();
-    _assetCtrls = AssetFormControllers.init();
+    _assetCtrls = AssetFormControllers.single();
   }
 
   @override

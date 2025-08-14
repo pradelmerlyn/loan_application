@@ -72,7 +72,7 @@ class ToggleSwitchField extends StatelessWidget {
                         const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                     decoration: BoxDecoration(
                       color: current
-                          ? theme.colorScheme.primary.withValues(alpha: 0.15)
+                          ? theme.colorScheme.primary.withOpacity(0.15)
                           : Colors.grey.shade200,
                       borderRadius: BorderRadius.circular(20),
                     ),

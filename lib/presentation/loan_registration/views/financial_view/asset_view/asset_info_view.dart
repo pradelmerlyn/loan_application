@@ -12,9 +12,9 @@ class AssetsSection extends StatefulWidget {
 }
 
 class _AssetsSectionState extends State<AssetsSection> {
-  final List<AssetEntity> _assets = const [
-    AssetEntity(),
-  ].toList();
+  final List<AssetEntity> _assets = <AssetEntity>[
+    const AssetEntity(), // empty starter item (optional)
+  ];
 
   Future<void> _handleAddAsset() async {
     final choice = await showDialog<String>(
@@ -28,6 +28,7 @@ class _AssetsSectionState extends State<AssetsSection> {
 
     if (!mounted || choice == null) return;
 
+    // For now both choices go to the same manual form screen
     final result = await Navigator.of(context).push<AssetEntity>(
       MaterialPageRoute(builder: (_) => const AssetFormScreen()),
     );
@@ -42,7 +43,7 @@ class _AssetsSectionState extends State<AssetsSection> {
     return _AssetsContainer(
       header: const _AssetsHeader(),
       list: _AssetsList(items: _assets),
-      addButton: _AddAssetButton(onPressed: () => _handleAddAsset()),
+      addButton: _AddAssetButton(onPressed: _handleAddAsset),
     );
   }
 }
@@ -106,6 +107,9 @@ class _AssetsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (items.isEmpty) {
+      return const Text('No assets added yet.');
+    }
     return Column(
       children: items
           .map(
@@ -123,17 +127,39 @@ class _AssetCard extends StatelessWidget {
   final AssetEntity item;
   const _AssetCard({required this.item});
 
+  String _maskAccount(String? acc) {
+    final s = acc ?? '';
+    if (s.length <= 4) return s;
+    return '•••• ${s.substring(s.length - 4)}';
+  }
+
+  String _formatAmount(num? value) {
+    if (value == null) return '—';
+    // simple formatting; swap for intl NumberFormat if you use it
+    return '\$${value.toStringAsFixed(2)}';
+  }
+
+  String _ownerLabel(List<String>? borrowersIds, String? userType) {
+    if (userType != null && userType.isNotEmpty) return userType;
+    if (borrowersIds != null && borrowersIds.isNotEmpty) {
+      return 'Owners: ${borrowersIds.join(", ")}';
+    }
+    return 'Owner: —';
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final titleStyle = Theme.of(
-      context,
-    ).textTheme.labelSmall?.copyWith(fontWeight: FontWeight.w700);
+    final titleStyle = Theme.of(context)
+        .textTheme
+        .labelSmall
+        ?.copyWith(fontWeight: FontWeight.w700);
 
-    final acc = item.accountNumber;
-    final masked = acc.length > 4
-        ? 'xxxxxxx${acc.substring(acc.length - 4)}'
-        : acc;
+    final bank = item.institutionName ?? '—';
+    final type = item.assetType ?? '—';
+    final maskedAcc = _maskAccount(item.accountIdentifier);
+    final ownerText = _ownerLabel(item.borrowersIds, item.userType);
+    final amountText = _formatAmount(item.assetValue);
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -142,7 +168,7 @@ class _AssetCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: .04),
+            color: Colors.black.withOpacity(0.04),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -157,7 +183,7 @@ class _AssetCard extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  item.bank,
+                  bank,
                   style: titleStyle,
                   softWrap: true,
                   overflow: TextOverflow.ellipsis,
@@ -173,7 +199,7 @@ class _AssetCard extends StatelessWidget {
 
           // Row 2: Account type – masked number
           Text(
-            '${item.type} - $masked',
+            '$type – $maskedAcc',
             style: TextStyle(color: theme.hintColor),
           ),
 
@@ -184,15 +210,14 @@ class _AssetCard extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  item.owner,
+                  ownerText,
                   style: TextStyle(color: theme.hintColor),
                 ),
               ),
-              // keep long amounts tidy
               ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 180),
                 child: Text(
-                  item.value,
+                  amountText,
                   style: titleStyle,
                   textAlign: TextAlign.right,
                   overflow: TextOverflow.ellipsis,
@@ -255,9 +280,10 @@ class _AddOptionsDialog extends StatelessWidget {
               alignment: Alignment.centerLeft,
               child: Text(
                 title,
-                style: Theme.of(
-                  context,
-                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+                style: Theme.of(context)
+                    .textTheme
+                    .titleMedium
+                    ?.copyWith(fontWeight: FontWeight.w700),
               ),
             ),
             const SizedBox(height: 16),

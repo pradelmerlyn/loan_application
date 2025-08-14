@@ -66,7 +66,7 @@ class LoanRegistrationState extends Equatable {
       total == 0 ? 0 : completed.where((e) => e).length / total;
 
   LoanRegistrationEntity get payload => LoanRegistrationEntity(
-        loanOfficerId: 'maine',
+        loanOfficerId: 'mmaine',
         borrower: borrower,
         coBorrower: coBorrower,
         assets: assets,

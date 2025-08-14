@@ -5,7 +5,7 @@ import 'package:loan/domain/entities/borrower/borrower_hmda/borrower_hmda_ethnic
 import 'package:loan/domain/entities/borrower/borrower_hmda/borrower_hmda_gender_details_entity.dart';
 import 'package:loan/domain/entities/borrower/borrower_hmda/borrower_hmda_race_details_entity.dart';
 import 'package:loan/domain/entities/borrower/borrower_info/borrower_current_address_entity.dart';
-import 'package:loan/domain/entities/borrower/borrower_info/borrower_home_phone_number_entity.dart';
+import 'package:loan/domain/entities/borrower/borrower_info/borrower_phone_number_entity.dart';
 import 'package:loan/domain/entities/borrower/borrower_info/borrower_mailing_address_entity.dart';
 import 'package:loan/domain/entities/borrower/borrower_info/borrower_previous_addresses_entity.dart';
 import 'package:loan/domain/entities/borrower/borrower_bankruptcy/borrower_bankruptcy_entity.dart';
@@ -39,8 +39,8 @@ class BorrowerEntity extends Equatable {
   @JsonKey(name: 'emailAddress')
   final String? emailAddress;
 
-  @JsonKey(name: 'homePhoneNumber')
-  final BorrowerHomePhoneNumberEntity? homePhoneNumber;
+  @JsonKey(name: 'phoneNumbers')
+  final List<BorrowerPhoneNumberEntity>? phoneNumbers;
 
   @JsonKey(name: 'maritalStatus')
   final String? maritalStatus;
@@ -57,8 +57,8 @@ class BorrowerEntity extends Equatable {
   @JsonKey(name: 'militaryServiceExpectedCompletionDate')
   final DateTime? militaryServiceExpectedCompletionDate;
 
-  @JsonKey(name: 'militaryStatusType')
-  final String? militaryStatusType;
+  @JsonKey(name: 'militaryServiceType')
+  final String? militaryServiceType;
 
   @JsonKey(name: 'currentAddress')
   final BorrowerCurrentAddressEntity? currentAddress;
@@ -168,13 +168,13 @@ class BorrowerEntity extends Equatable {
     this.dateOfBirth,
     this.taxIdentifier,
     this.emailAddress,
-    this.homePhoneNumber,
+    this.phoneNumbers,
     this.maritalStatus,
     this.dependentAges,
     this.spouseIsCoBorrowerIndicator,
     this.spouseEligibleForVABenefits,
     this.militaryServiceExpectedCompletionDate,
-    this.militaryStatusType,
+    this.militaryServiceType,
     this.currentAddress,
     this.prevAddresses,
     this.isMailingAddressSameAsCurrent,
@@ -220,13 +220,13 @@ class BorrowerEntity extends Equatable {
         dateOfBirth,
         taxIdentifier,
         emailAddress,
-        homePhoneNumber,
+        phoneNumbers,
         maritalStatus,
         dependentAges,
         spouseIsCoBorrowerIndicator,
         spouseEligibleForVABenefits,
         militaryServiceExpectedCompletionDate,
-        militaryStatusType,
+        militaryServiceType,
         currentAddress,
         prevAddresses,
         isMailingAddressSameAsCurrent,

@@ -29,7 +29,7 @@ BorrowerModel _$BorrowerModelFromJson(Map<String, dynamic> json) =>
               ? null
               : DateTime.parse(
                   json['militaryServiceExpectedCompletionDate'] as String),
-      militaryStatusType: json['militaryStatusType'] as String?,
+      militaryServiceType: json['militaryServiceType'] as String?,
       isMailingAddressSameAsCurrent:
           json['isMailingAddressSameAsCurrent'] as bool?,
       intentToOccupy: json['intentToOccupy'] as bool?,
@@ -79,10 +79,10 @@ BorrowerModel _$BorrowerModelFromJson(Map<String, dynamic> json) =>
       currentTotalMonthlyHousingExpense:
           json['currentTotalMonthlyHousingExpense'] as num?,
       livedMoreThanTwoYears: json['livedMoreThanTwoYears'] as bool?,
-      homePhoneNumber: json['homePhoneNumber'] == null
-          ? null
-          : BorrowerHomePhoneNumberModel.fromJson(
-              json['homePhoneNumber'] as Map<String, dynamic>),
+      phoneNumbers: (json['phoneNumbers'] as List<dynamic>?)
+          ?.map((e) =>
+              BorrowerPhoneNumberModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
       currentAddress: json['currentAddress'] == null
           ? null
           : BorrowerCurrentAddressModel.fromJson(
@@ -126,14 +126,14 @@ Map<String, dynamic> _$BorrowerModelToJson(BorrowerModel instance) =>
       'dateOfBirth': instance.dateOfBirth?.toIso8601String(),
       'taxIdentifier': instance.taxIdentifier,
       'emailAddress': instance.emailAddress,
-      'homePhoneNumber': instance.homePhoneNumber?.toJson(),
+      'phoneNumbers': instance.phoneNumbers?.map((e) => e.toJson()).toList(),
       'maritalStatus': instance.maritalStatus,
       'dependentAges': instance.dependentAges,
       'spouseIsCoBorrowerIndicator': instance.spouseIsCoBorrowerIndicator,
       'spouseEligibleForVABenefits': instance.spouseEligibleForVABenefits,
       'militaryServiceExpectedCompletionDate':
           instance.militaryServiceExpectedCompletionDate?.toIso8601String(),
-      'militaryStatusType': instance.militaryStatusType,
+      'militaryServiceType': instance.militaryServiceType,
       'currentAddress': instance.currentAddress?.toJson(),
       'addresses': instance.prevAddresses?.map((e) => e.toJson()).toList(),
       'isMailingAddressSameAsCurrent': instance.isMailingAddressSameAsCurrent,

@@ -3,25 +3,36 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:loan/domain/use_case/loan_registration/loan_registration_use_case.dart';
+import 'package:loan/core/dependency_injection/injection_container.dart';
+
+// controllers
 import 'package:loan/presentation/assets/form_controllers/asset_form_controllers.dart';
-
-import 'package:loan/presentation/loan_registration/bloc/loan_registration/loan_registration_bloc.dart';
-import 'package:loan/presentation/loan_registration/bloc/borrower_view/borrower_view_bloc.dart';
-
 import 'package:loan/presentation/loan_registration/form_controllers/borrower_info_form_controllers.dart';
 import 'package:loan/presentation/loan_registration/form_controllers/property_info_form_controllers.dart';
 import 'package:loan/presentation/loan_registration/form_controllers/declaration_info_form_controllers.dart';
 import 'package:loan/presentation/loan_registration/form_controllers/demographic_info_form_controller.dart';
 
+// blocs + state
+import 'package:loan/presentation/loan_registration/bloc/loan_registration/loan_registration_bloc.dart';
+import 'package:loan/presentation/loan_registration/bloc/loan_registration/loan_registration_state.dart';
+import 'package:loan/presentation/loan_registration/bloc/borrower_view/borrower_view_bloc.dart';
+
+// payload helpers
+import 'package:loan/presentation/loan_registration/form_helpers/borrower_payload_builder.dart'
+    show buildBorrowerFromForm;
+import 'package:loan/presentation/loan_registration/form_helpers/payload_builder.dart'
+    show buildLoanRegistrationEntityFromControllers;
+
+// views
 import 'package:loan/presentation/loan_registration/views/borrower_view/borrower_view.dart';
 import 'package:loan/presentation/loan_registration/views/property_view/property_view.dart';
 import 'package:loan/presentation/loan_registration/views/financial_view/financial_view.dart';
 import 'package:loan/presentation/loan_registration/views/declaration_view/declaration_view.dart';
 import 'package:loan/presentation/loan_registration/views/demographics_view/demographic_view.dart';
+
+// UI
 import 'package:loan/presentation/widgets/ui/button_outlined.dart';
 import 'package:loan/presentation/widgets/ui/step_progress_header.dart';
-import 'package:loan/presentation/widgets/ui/success_dialog.dart';
 
 class LoanRegistrationScreen extends StatefulWidget {
   const LoanRegistrationScreen({super.key});
@@ -54,7 +65,7 @@ class _LoanRegistrationScreenState extends State<LoanRegistrationScreen>
 
     borrowerCtrls = BorrowerInfoFormControllers.init();
     propertyCtrls = PropertyInfoFormControllers.init();
-    financialCtrl = AssetFormControllers.init();
+    financialCtrl = AssetFormControllers.single();
     declarationCtrls = DeclarationInfoFormControllers.init();
     demographicsCtrls = DemographicsFormControllers.init();
 
@@ -75,15 +86,26 @@ class _LoanRegistrationScreenState extends State<LoanRegistrationScreen>
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      // initialize steps
-      create: (_) => LoanRegistrationBloc(
-        sl<LoanRegistrationUseCase>(),
-      )..add(const InitSteps(total: 5)),
+      // ✅ use DI to build the bloc (both use cases already injected)
+      create: (_) => sl<LoanRegistrationBloc>()..add(const InitSteps(total: 5)),
       child: BlocListener<LoanRegistrationBloc, LoanRegistrationState>(
         listener: (context, state) {
-          final target = (state.currentStep - 1).clamp(0, _tabs.length - 1);
+          final target = (state.currentStep - 1).clamp(0, 4);
           if (_tabs.index != target) _tabs.animateTo(target);
+
           if (kDebugMode) debugPrint('Step -> ${state.currentStep}');
+
+          final err = state.error ?? '';
+          if (state.status == LoanRegStatus.failure && err.isNotEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(err)),
+            );
+          }
+
+          // move forward automatically when borrower submit succeeds
+          if (state.status == LoanRegStatus.success && state.currentStep == 1) {
+            context.read<LoanRegistrationBloc>().add(const NextStepsEvent());
+          }
         },
         child: BlocBuilder<LoanRegistrationBloc, LoanRegistrationState>(
           builder: (context, state) {
@@ -114,11 +136,11 @@ class _LoanRegistrationScreenState extends State<LoanRegistrationScreen>
                   child: StepProgressHeader(
                     current: state.currentStep,
                     icons: const [
-                      Icons.person, // Borrower
-                      Icons.home_rounded, // Property
-                      Icons.attach_money_rounded, // Financial
-                      Icons.fact_check_rounded, // Declarations
-                      Icons.groups_rounded, // Demographics
+                      Icons.person,
+                      Icons.home_rounded,
+                      Icons.attach_money_rounded,
+                      Icons.fact_check_rounded,
+                      Icons.groups_rounded,
                     ],
                   ),
                 ),
@@ -127,7 +149,6 @@ class _LoanRegistrationScreenState extends State<LoanRegistrationScreen>
                 controller: _tabs,
                 physics: const NeverScrollableScrollPhysics(),
                 children: [
-                  // Borrower
                   BlocProvider(
                     create: (_) => BorrowerViewBloc(),
                     child: BorrowerView(
@@ -135,7 +156,6 @@ class _LoanRegistrationScreenState extends State<LoanRegistrationScreen>
                       formKey: borrowerFormKey,
                     ),
                   ),
-                  // Property
                   PropertyView(
                     controllers: propertyCtrls,
                     formKey: propertyFormKey,
@@ -163,7 +183,6 @@ class _LoanRegistrationScreenState extends State<LoanRegistrationScreen>
                 financialFormKey: financialFormKey,
                 declarationFormKey: declarationFormKey,
                 demographicFormKey: demographicFormKey,
-
                 borrowerCtrls: borrowerCtrls,
                 propertyCtrls: propertyCtrls,
                 financialCtrl: financialCtrl,
@@ -189,7 +208,6 @@ class _BottomNavBar extends StatelessWidget {
   final GlobalKey<FormState> declarationFormKey;
   final GlobalKey<FormState> demographicFormKey;
 
-  // NEW: controllers
   final BorrowerInfoFormControllers borrowerCtrls;
   final PropertyInfoFormControllers propertyCtrls;
   final AssetFormControllers financialCtrl;
@@ -233,6 +251,9 @@ class _BottomNavBar extends StatelessWidget {
       }
     }
 
+    final state = context.watch<LoanRegistrationBloc>().state;
+    final isLoading = state.status == LoanRegStatus.loading;
+
     return SafeArea(
       top: false,
       child: Container(
@@ -241,7 +262,7 @@ class _BottomNavBar extends StatelessWidget {
           color: Colors.white,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
+              color: Colors.black.withOpacity(0.05),
               blurRadius: 16,
               offset: const Offset(0, -6),
             ),
@@ -252,16 +273,18 @@ class _BottomNavBar extends StatelessWidget {
             Expanded(
               child: ButtonOutlined(
                 label: isFirst ? 'CANCEL' : 'BACK',
-                onPressed: () {
-                  SystemChannels.textInput.invokeMethod('TextInput.hide');
-                  if (isFirst) {
-                    Navigator.maybePop(context);
-                  } else {
-                    context.read<LoanRegistrationBloc>().add(
-                          const PrevStepsEvent(),
-                        );
-                  }
-                },
+                onPressed: isLoading
+                    ? null
+                    : () {
+                        SystemChannels.textInput.invokeMethod('TextInput.hide');
+                        if (isFirst) {
+                          Navigator.maybePop(context);
+                        } else {
+                          context.read<LoanRegistrationBloc>().add(
+                                const PrevStepsEvent(),
+                              );
+                        }
+                      },
                 backgroundColor: Colors.white,
                 foregroundColor: theme.colorScheme.secondary,
                 borderColor: theme.colorScheme.secondary,
@@ -270,32 +293,63 @@ class _BottomNavBar extends StatelessWidget {
             const SizedBox(width: 16),
             Expanded(
               child: ButtonOutlined(
-                label: nextLabel,
-                onPressed: () async {
-                  SystemChannels.textInput.invokeMethod('TextInput.hide');
-                  if (!validateForStep()) return;
+                label: isLoading ? 'PLEASE WAIT...' : nextLabel,
+                onPressed: isLoading
+                    ? null
+                    : () {
+                        final bloc = context.read<LoanRegistrationBloc>();
+                        SystemChannels.textInput.invokeMethod('TextInput.hide');
+                        if (!validateForStep()) return;
 
-                  final bloc = context.read<LoanRegistrationBloc>();
-                  final isLast = bloc.state.currentStep == bloc.state.total;
-                  const token = 'YOUR_JWT_TOKEN_HERE';
+                        final isLast =
+                            bloc.state.currentStep == bloc.state.total;
 
-                  if (isLast) {
-                    // Build the full payload from controllers
-                    // final payload = buildLoanRegistrationPayload(
-                    //   borrowerCtrls: context.findAncestorStateOfType<_LoanRegistrationScreenState>()!.borrowerCtrls,
-                    //   propertyCtrls: context.findAncestorStateOfType<_LoanRegistrationScreenState>()!.propertyCtrls,
-                    //   financialCtrl: context.findAncestorStateOfType<_LoanRegistrationScreenState>()!.financialCtrl,
-                    //   // add declarationCtrls / demographicsCtrls if needed
-                    // );
+                        // ✅ STEP 1: submit Borrower only
+                        if (bloc.state.currentStep == 1) {
+                          borrowerFormKey.currentState?.save();
 
-                    //bloc.add(SubmitLoanRegistration(token: token, payload: payload));
-                    return;
-                  }
+                          final borrower = buildBorrowerFromForm(borrowerCtrls);
+                          if (kDebugMode) {
+                            debugPrint(
+                                '[UI] Submitting borrower: ${borrower.toJson()}');
+                          }
 
-                  bloc.add(const NextStepsEvent());
-                },
+                          context.read<LoanRegistrationBloc>().add(
+                                SubmitBorrowerInfo(borrower: borrower),
+                              );
+                          return; // listener will advance on success
+                        }
+
+                        // ✅ FINAL SUBMIT (OPTIONAL): submit the full application
+                        if (isLast) {
+                          final payload =
+                              buildLoanRegistrationEntityFromControllers(
+                            borrowerCtrls: borrowerCtrls,
+                            propertyCtrls: propertyCtrls,
+                            financialCtrl: financialCtrl,
+                          );
+                          if (kDebugMode) {
+                            debugPrint(
+                                '[UI] Final submit payload: ${payload.toJson()}');
+                          }
+                          context
+                              .read<LoanRegistrationBloc>()
+                              .add(SubmitLoanRegistration(payload: payload));
+                          return;
+                        }
+
+                        // otherwise go next
+                        bloc.add(const NextStepsEvent());
+                      },
                 backgroundColor: theme.colorScheme.secondary,
                 foregroundColor: Colors.white,
+                trailing: isLoading
+                    ? const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : null,
               ),
             ),
           ],

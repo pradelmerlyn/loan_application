@@ -17,11 +17,9 @@ Future<void> initializeDependencies() async {
 
   //! ----- use cases -----
   final UseCaseRegistry useCaseRegistry = UseCaseRegistry();
-  useCaseRegistry.registerLoanRegistrationUseCases();
+  useCaseRegistry.registerSubmitLoanUseCases();
 
   //! ----- blocs -----
   final BlocRegistry blocsRegistry = BlocRegistry();
   blocsRegistry.registerLoanRegistrationBlocs();
-
-  
 }

@@ -40,20 +40,19 @@ class MarkCompleted extends LoanRegistrationEvent {
 
 // Submit the borrower page only
 class SubmitBorrowerInfo extends LoanRegistrationEvent {
-  final String token;
+  //final String token;
   final BorrowerEntity borrower;
-  const SubmitBorrowerInfo({required this.token, required this.borrower});
+  const SubmitBorrowerInfo({required this.borrower});
   @override
-  List<Object?> get props => [token, borrower];
+  List<Object?> get props => [ borrower];
 }
 
 // Submit the whole loan registration payload
 class SubmitLoanRegistration extends LoanRegistrationEvent {
-  final String token;
   final LoanRegistrationEntity payload;
   const SubmitLoanRegistration({
-    required this.token, required this.payload
+    required this.payload
   });
   @override
-  List<Object?> get props => [token, payload];
+  List<Object?> get props => [ payload];
 }

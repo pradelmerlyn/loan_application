@@ -7,18 +7,19 @@ import 'package:loan/data/model/borrower/borrower_hmda/borrower_hmda_gender_deta
 import 'package:loan/data/model/borrower/borrower_hmda/borrower_hmda_race_details_model.dart';
 import 'package:loan/data/model/borrower/borrower_income/borrower_income_model.dart';
 import 'package:loan/data/model/borrower/borrower_info/borrower_current_address_model.dart';
-import 'package:loan/data/model/borrower/borrower_info/borrower_home_phone_number_model.dart';
+import 'package:loan/data/model/borrower/borrower_info/borrower_phone_number_model.dart';
 import 'package:loan/data/model/borrower/borrower_info/borrower_mailing_address_model.dart';
 import 'package:loan/data/model/borrower/borrower_info/borrower_previous_addresses_model.dart';
 
 import 'package:loan/domain/entities/borrower/borrower_info/borrower_entity.dart';
+import 'package:loan/domain/entities/borrower/borrower_info/borrower_phone_number_entity.dart';
 
 part 'borrower_model.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class BorrowerModel extends BorrowerEntity {
   const BorrowerModel({
-    
+    // scalars
     super.id,
     super.firstName,
     super.middleName,
@@ -32,7 +33,7 @@ class BorrowerModel extends BorrowerEntity {
     super.spouseIsCoBorrowerIndicator,
     super.spouseEligibleForVABenefits,
     super.militaryServiceExpectedCompletionDate,
-    super.militaryStatusType,
+    super.militaryServiceType,
     super.isMailingAddressSameAsCurrent,
     super.intentToOccupy,
     super.homeownerPastThreeYears,
@@ -59,8 +60,8 @@ class BorrowerModel extends BorrowerEntity {
     super.currentTotalMonthlyHousingExpense,
     super.livedMoreThanTwoYears,
 
-    // nested (models)
-    BorrowerHomePhoneNumberModel? super.homePhoneNumber,
+    // nested models (FIX: phoneNumbers must be a LIST)
+    List<BorrowerPhoneNumberModel>? super.phoneNumbers,
     BorrowerCurrentAddressModel? super.currentAddress,
     List<BorrowerPreviousAddressesModel>? super.prevAddresses,
     BorrowerMailingAddressModel? super.mailingAddress,
@@ -71,7 +72,7 @@ class BorrowerModel extends BorrowerEntity {
     BorrowerHmdaRaceDetailsModel? super.hmdaRaceDetails,
   });
 
-  /// Convenient converter: Domain Entity -> Data Model
+  /// Domain Entity -> Data Model
   factory BorrowerModel.fromEntity(BorrowerEntity e) => BorrowerModel(
         id: e.id,
         firstName: e.firstName,
@@ -87,7 +88,7 @@ class BorrowerModel extends BorrowerEntity {
         spouseEligibleForVABenefits: e.spouseEligibleForVABenefits,
         militaryServiceExpectedCompletionDate:
             e.militaryServiceExpectedCompletionDate,
-        militaryStatusType: e.militaryStatusType,
+        militaryServiceType: e.militaryServiceType,
         isMailingAddressSameAsCurrent: e.isMailingAddressSameAsCurrent,
         intentToOccupy: e.intentToOccupy,
         homeownerPastThreeYears: e.homeownerPastThreeYears,
@@ -118,13 +119,13 @@ class BorrowerModel extends BorrowerEntity {
         foreclosureLatestCompletionDate: e.foreclosureLatestCompletionDate,
         bankruptcyIndicator: e.bankruptcyIndicator,
         action: e.action,
-        currentTotalMonthlyHousingExpense: e.currentTotalMonthlyHousingExpense,
+        currentTotalMonthlyHousingExpense: 0,
         livedMoreThanTwoYears: e.livedMoreThanTwoYears,
 
-        // nested -> build models from entities
-        homePhoneNumber: e.homePhoneNumber != null
-            ? BorrowerHomePhoneNumberModel.fromEntity(e.homePhoneNumber!)
-            : null,
+        // nested -> lists mapped element-by-element
+        phoneNumbers: e.phoneNumbers
+            ?.map((p) => BorrowerPhoneNumberModel.fromEntity(p))
+            .toList(),
         currentAddress: e.currentAddress != null
             ? BorrowerCurrentAddressModel.fromEntity(e.currentAddress!)
             : null,
@@ -152,14 +153,12 @@ class BorrowerModel extends BorrowerEntity {
             : null,
       );
 
-  // JSON
   factory BorrowerModel.fromJson(Map<String, dynamic> json) =>
       _$BorrowerModelFromJson(json);
 
   @override
   Map<String, dynamic> toJson() => _$BorrowerModelToJson(this);
 
-  // Equatable
   @override
   List<Object?> get props => super.props;
 }

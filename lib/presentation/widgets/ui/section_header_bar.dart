@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 class SectionHeaderBar extends StatelessWidget {
@@ -13,7 +12,7 @@ class SectionHeaderBar extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
       decoration: BoxDecoration(
-        color: theme.colorScheme.primary.withValues(alpha: 0.14),
+        color: theme.colorScheme.primary.withOpacity(0.14),
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(12), // match outer container radius
           topRight: Radius.circular(12),

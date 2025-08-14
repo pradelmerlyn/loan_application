@@ -5,8 +5,8 @@ part 'borrower_current_address_entity.g.dart';
 
 @JsonSerializable()
 class BorrowerCurrentAddressEntity extends Equatable {
-  @JsonKey(name: 'id')
-  final String? id;
+  // @JsonKey(name: 'id')
+  // final String? id;
 
   @JsonKey(name: 'line')
   final String? line;
@@ -39,7 +39,7 @@ class BorrowerCurrentAddressEntity extends Equatable {
   final String? action;
 
   const BorrowerCurrentAddressEntity({
-    this.id,
+    //this.id,
     this.line,
     this.line2,
     this.city,
@@ -54,7 +54,7 @@ class BorrowerCurrentAddressEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
+        //id,
         line,
         line2,
         city,

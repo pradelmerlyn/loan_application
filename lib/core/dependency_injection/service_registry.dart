@@ -11,6 +11,7 @@ class ServicesRegistry {
     sl.registerLazySingleton<LoanRegistrationService>(
       () => LoanRegistrationService(DioInstance.init(), baseUrl: Endpoints.baseUrl),
     );
+    
   }
 
 

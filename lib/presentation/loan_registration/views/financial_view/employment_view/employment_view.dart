@@ -110,7 +110,7 @@ class _EmploymentCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: .04),
+            color: Colors.black.withOpacity(0.04),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -143,7 +143,7 @@ class _EmploymentCard extends StatelessWidget {
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.green.withValues(alpha: .15),
+                          color: Colors.green.withOpacity(0.15),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: const Text(

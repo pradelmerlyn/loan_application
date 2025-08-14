@@ -18,10 +18,10 @@ BorrowerEntity _$BorrowerEntityFromJson(Map<String, dynamic> json) =>
           : DateTime.parse(json['dateOfBirth'] as String),
       taxIdentifier: json['taxIdentifier'] as String?,
       emailAddress: json['emailAddress'] as String?,
-      homePhoneNumber: json['homePhoneNumber'] == null
-          ? null
-          : BorrowerHomePhoneNumberEntity.fromJson(
-              json['homePhoneNumber'] as Map<String, dynamic>),
+      phoneNumbers: (json['phoneNumbers'] as List<dynamic>?)
+          ?.map((e) =>
+              BorrowerPhoneNumberEntity.fromJson(e as Map<String, dynamic>))
+          .toList(),
       maritalStatus: json['maritalStatus'] as String?,
       dependentAges: (json['dependentAges'] as List<dynamic>?)
           ?.map((e) => (e as num).toInt())
@@ -33,7 +33,7 @@ BorrowerEntity _$BorrowerEntityFromJson(Map<String, dynamic> json) =>
               ? null
               : DateTime.parse(
                   json['militaryServiceExpectedCompletionDate'] as String),
-      militaryStatusType: json['militaryStatusType'] as String?,
+      militaryServiceType: json['militaryServiceType'] as String?,
       currentAddress: json['currentAddress'] == null
           ? null
           : BorrowerCurrentAddressEntity.fromJson(
@@ -126,14 +126,14 @@ Map<String, dynamic> _$BorrowerEntityToJson(BorrowerEntity instance) =>
       'dateOfBirth': instance.dateOfBirth?.toIso8601String(),
       'taxIdentifier': instance.taxIdentifier,
       'emailAddress': instance.emailAddress,
-      'homePhoneNumber': instance.homePhoneNumber,
+      'phoneNumbers': instance.phoneNumbers,
       'maritalStatus': instance.maritalStatus,
       'dependentAges': instance.dependentAges,
       'spouseIsCoBorrowerIndicator': instance.spouseIsCoBorrowerIndicator,
       'spouseEligibleForVABenefits': instance.spouseEligibleForVABenefits,
       'militaryServiceExpectedCompletionDate':
           instance.militaryServiceExpectedCompletionDate?.toIso8601String(),
-      'militaryStatusType': instance.militaryStatusType,
+      'militaryServiceType': instance.militaryServiceType,
       'currentAddress': instance.currentAddress,
       'addresses': instance.prevAddresses,
       'isMailingAddressSameAsCurrent': instance.isMailingAddressSameAsCurrent,

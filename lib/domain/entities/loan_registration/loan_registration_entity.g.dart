@@ -28,7 +28,7 @@ LoanRegistrationEntity _$LoanRegistrationEntityFromJson(
           ? null
           : PropertyEntity.fromJson(
               json['subjectProperty'] as Map<String, dynamic>),
-      loanAmount: (json['loanAmount'] as num?)?.toDouble(),
+      loanAmount: json['loanAmount'] as num?,
       refinanceCashOutDeterminationType:
           json['refinanceCashOutDeterminationType'] as String?,
       desiredCashOut: (json['desiredCashOut'] as num?)?.toDouble(),

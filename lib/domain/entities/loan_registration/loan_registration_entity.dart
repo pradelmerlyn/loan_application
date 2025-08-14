@@ -36,7 +36,7 @@ class LoanRegistrationEntity extends Equatable {
   final PropertyEntity? subjectProperty;
 
   @JsonKey(name: 'loanAmount')
-  final double? loanAmount;
+  final num? loanAmount;
 
   @JsonKey(name: 'refinanceCashOutDeterminationType')
   final String? refinanceCashOutDeterminationType;
