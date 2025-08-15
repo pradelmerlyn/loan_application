@@ -1,27 +1,33 @@
+// presentation/loan_registration/bloc/loan_registration/loan_registration_bloc.dart
+import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
+
 import 'package:loan/core/util/network/data_state.dart';
+
+// Domain entities
 import 'package:loan/domain/entities/borrower/borrower_info/borrower_entity.dart';
 import 'package:loan/domain/entities/loan_registration/loan_registration_entity.dart';
+import 'package:loan/domain/entities/loan_registration/loan_registration_response_entity.dart';
 
-// ✅ two distinct use cases (and their params)
-import 'package:loan/domain/use_case/borrower_registration/submit_borrower_use_case.dart'
-    show SubmitBorrowerUseCase, SubmitBorrowerParams;
+// Response validation helper (extension on entity)
+import 'package:loan/presentation/loan_registration/validators/response_validator.dart';
 
+// Single use case for both steps
 import 'package:loan/domain/use_case/loan_registration/submit_loan_use_case.dart'
     show SubmitLoanUseCase, SubmitApplicationParams;
 
+// State
 import 'package:loan/presentation/loan_registration/bloc/loan_registration/loan_registration_state.dart';
 
 part 'loan_registration_event.dart';
 
 class LoanRegistrationBloc
     extends Bloc<LoanRegistrationEvent, LoanRegistrationState> {
-  final SubmitBorrowerUseCase submitBorrowerUseCase;
   final SubmitLoanUseCase submitApplicationUseCase;
 
   LoanRegistrationBloc({
-    required this.submitBorrowerUseCase,
     required this.submitApplicationUseCase,
   }) : super(const LoanRegistrationState(
           total: 0,
@@ -33,23 +39,27 @@ class LoanRegistrationBloc
     on<NextStepsEvent>(_onNext);
     on<PrevStepsEvent>(_onPrev);
     on<MarkCompleted>(_onMarkCompleted);
+
+    // API
     on<SubmitBorrowerInfo>(_onSubmitBorrowerInfo);
-    on<SubmitLoanRegistration>(_onSubmitLoan);
+    on<SubmitLoanRegistration>(_onSubmitLoan); // <- final submit
   }
+
+  // ---------- navigation / UI state ----------
 
   void _onInit(InitSteps e, Emitter<LoanRegistrationState> emit) {
     final total = e.total.clamp(0, 50);
     final start0 = e.startAt.clamp(0, total == 0 ? 0 : total - 1);
     final current1 = total == 0 ? 1 : start0 + 1;
-    final list = List<bool>.filled(total, false);
+    final completed = List<bool>.filled(total, false);
 
     emit(state.copyWith(
       total: total,
       currentStep: current1,
-      completed: list,
+      completed: completed,
       stepLabel: _labelFor(current1),
       buttonLabel: _buttonFor(current1, total),
-      completionPercentage: _percentFor(list, total),
+      completionPercentage: _percentFor(completed, total),
       status: LoanRegStatus.idle,
       clearError: true,
       clearRegistration: true,
@@ -99,62 +109,224 @@ class LoanRegistrationBloc
     ));
   }
 
-  // ---------- API calls ----------
+  // ---------- API calls (single use case) ----------
 
+  /// STEP 1 — borrower-only submit -> POST /application
   Future<void> _onSubmitBorrowerInfo(
     SubmitBorrowerInfo event,
     Emitter<LoanRegistrationState> emit,
   ) async {
-    emit(state.copyWith(
-      status: LoanRegStatus.loading,
-      clearError: true,
-      clearRegistration: true,
-    ));
-
-    // ✅ FIX: pass the correct named param
-    final res = await submitBorrowerUseCase(
-      SubmitBorrowerParams(borrower: event.borrower),
-    );
-
-    if (res is DataSuccess<LoanRegistrationEntity>) {
+    try {
       emit(state.copyWith(
-        status: LoanRegStatus.success,
-        registration: res.data,
+        status: LoanRegStatus.loading,
+        clearError: true,
+        clearRegistration: true,
       ));
-    } else if (res is DataFailed) {
+
+      final res = await submitApplicationUseCase(
+        SubmitApplicationParams.borrower(event.borrower),
+      );
+
+      await _handleResponseOrFail(
+        res,
+        emit,
+        onSuccessLog: 'Borrower step response',
+        onFailFallback: 'Failed to submit borrower',
+        onSuccess: (resp) async{
+          // Save identifiers from the first API
+          emit(state.copyWith(
+            loanId: resp.id, // GUID string
+            loanNumber: resp.loanNumber, // int?
+            borrowerId: resp.borrower?.id, // GUID string
+          ));
+        },
+      );
+    } catch (e, st) {
+      log('Unexpected error in _onSubmitBorrowerInfo: $e');
+      log(st.toString());
       emit(state.copyWith(
         status: LoanRegStatus.failure,
-        error: res.error?.message ?? 'Failed to submit borrower',
+        error: 'Unexpected error occurred: $e',
       ));
     }
   }
 
+  /// FINAL SUBMIT LOAN REGISTARTION
   Future<void> _onSubmitLoan(
     SubmitLoanRegistration e,
     Emitter<LoanRegistrationState> emit,
   ) async {
-    emit(state.copyWith(
-      status: LoanRegStatus.loading,
-      clearError: true,
-      clearRegistration: true,
-    ));
-
-    // ✅ Ensure you’re importing + using SubmitApplicationParams from submit_loan_use_case.dart
-    final res = await submitApplicationUseCase(
-      SubmitApplicationParams(payload: e.payload),
-    );
-
-    if (res is DataSuccess<LoanRegistrationEntity>) {
+    try {
       emit(state.copyWith(
-        status: LoanRegStatus.success,
-        registration: res.data,
+        status: LoanRegStatus.loading,
+        clearError: true,
+        clearRegistration: true,
       ));
-    } else if (res is DataFailed) {
+
+      final orig = e.payload;
+
+      // 🔑 Manually build a new payload with injected IDs
+      final enrichedPayload = LoanRegistrationEntity(
+        id: state.loanId, // int? from step-1
+        loanNumber: state.loanNumber, // int? from step-1
+        loanOfficerId: orig.loanOfficerId,
+        branchId: orig.branchId,
+        loanPurpose: orig.loanPurpose,
+        loanAmount: orig.loanAmount,
+        subjectPropertyFoundIndicator: orig.subjectPropertyFoundIndicator,
+        subjectProperty: orig.subjectProperty,
+        coBorrower: orig.coBorrower,
+        assets: orig.assets,
+        refinanceCashOutDeterminationType:
+            orig.refinanceCashOutDeterminationType,
+        desiredCashOut: orig.desiredCashOut,
+        refinanceYourPrimaryHome: orig.refinanceYourPrimaryHome,
+
+        // 🔑 inject borrower id
+        borrower: orig.borrower == null
+            ? null
+            : BorrowerEntity(
+                id: state.borrowerId,
+                firstName: orig.borrower!.firstName,
+                middleName: orig.borrower!.middleName,
+                lastName: orig.borrower!.lastName,
+                suffixName: orig.borrower!.suffixName,
+                dateOfBirth: orig.borrower!.dateOfBirth,
+                taxIdentifier: orig.borrower!.taxIdentifier,
+                emailAddress: orig.borrower!.emailAddress,
+                phoneNumbers: orig.borrower!.phoneNumbers,
+                maritalStatus: orig.borrower!.maritalStatus,
+                dependentAges: orig.borrower!.dependentAges,
+                spouseIsCoBorrowerIndicator:
+                    orig.borrower!.spouseIsCoBorrowerIndicator,
+                spouseEligibleForVABenefits:
+                    orig.borrower!.spouseEligibleForVABenefits,
+                militaryServiceExpectedCompletionDate:
+                    orig.borrower!.militaryServiceExpectedCompletionDate,
+                militaryStatusType: orig.borrower!.militaryStatusType,
+                currentAddress: orig.borrower!.currentAddress,
+                addresses: orig.borrower!.addresses,
+                isMailingAddressSameAsCurrent:
+                    orig.borrower!.isMailingAddressSameAsCurrent,
+                mailingAddress: orig.borrower!.mailingAddress,
+                incomes: orig.borrower!.incomes,
+                intentToOccupy: orig.borrower!.intentToOccupy,
+                homeownerPastThreeYears: orig.borrower!.homeownerPastThreeYears,
+                priorPropertyUsageType: orig.borrower!.priorPropertyUsageType,
+                priorPropertyTitleType: orig.borrower!.priorPropertyTitleType,
+                specialBorrowerSellerRelationshipIndicator:
+                    orig.borrower!.specialBorrowerSellerRelationshipIndicator,
+                undisclosedBorrowedFundsIndicator:
+                    orig.borrower!.undisclosedBorrowedFundsIndicator,
+                undisclosedBorrowedFundsAmount:
+                    orig.borrower!.undisclosedBorrowedFundsAmount,
+                undisclosedMortgageApplicationIndicator:
+                    orig.borrower!.undisclosedMortgageApplicationIndicator,
+                undisclosedCreditApplicationIndicator:
+                    orig.borrower!.undisclosedCreditApplicationIndicator,
+                propertySubjectToPriorityLienIndicator:
+                    orig.borrower!.propertySubjectToPriorityLienIndicator,
+                undisclosedComakerOfNoteIndicator:
+                    orig.borrower!.undisclosedComakerOfNoteIndicator,
+                outstandingJudgmentsIndicator:
+                    orig.borrower!.outstandingJudgmentsIndicator,
+                partyToLawsuitIndicator: orig.borrower!.partyToLawsuitIndicator,
+                presentlyDelinquentIndicator:
+                    orig.borrower!.presentlyDelinquentIndicator,
+                priorPropertyDeedInLieuConveyedIndicator:
+                    orig.borrower!.priorPropertyDeedInLieuConveyedIndicator,
+                deedInLieuLatestCompletionDate:
+                    orig.borrower!.deedInLieuLatestCompletionDate,
+                priorPropertyShortSaleCompletedIndicator:
+                    orig.borrower!.priorPropertyShortSaleCompletedIndicator,
+                shortSaleLatestCompletionDate:
+                    orig.borrower!.shortSaleLatestCompletionDate,
+                priorPropertyForeclosureCompletedIndicator:
+                    orig.borrower!.priorPropertyForeclosureCompletedIndicator,
+                foreclosureLatestCompletionDate:
+                    orig.borrower!.foreclosureLatestCompletionDate,
+                bankruptcyIndicator: orig.borrower!.bankruptcyIndicator,
+                bankruptcies: orig.borrower!.bankruptcies,
+                hmdaGenderDetails: orig.borrower!.hmdaGenderDetails,
+                hmdaEthnicityDetails: orig.borrower!.hmdaEthnicityDetails,
+                hmdaRaceDetails: orig.borrower!.hmdaRaceDetails,
+                action: orig.borrower!.action,
+                currentTotalMonthlyHousingExpense:
+                    orig.borrower!.currentTotalMonthlyHousingExpense,
+                livedMoreThanTwoYears: orig.borrower!.livedMoreThanTwoYears,
+              ),
+      );
+
+      final res = await submitApplicationUseCase(
+        SubmitApplicationParams.finalSubmit(enrichedPayload),
+      );
+
+      await _handleResponseOrFail(
+        res,
+        emit,
+        onSuccessLog: 'Final submit response',
+        onFailFallback: 'Failed to submit application',
+        onSuccess: (resp) async {
+          emit(state.copyWith(
+           
+            loanId: resp.id,
+            loanNumber: resp.loanNumber,
+            borrowerId: resp.borrower?.id,
+          ));
+        },
+      );
+    } catch (e, st) {
+      log('Unexpected error in _onSubmitLoan: $e');
+      log(st.toString());
       emit(state.copyWith(
         status: LoanRegStatus.failure,
-        error: res.error?.message ?? 'Failed to submit application',
+        error: 'Unexpected error occurred: $e',
       ));
     }
+  }
+
+  /// Centralized handler for DataState<LoanRegistrationResponseEntity>
+  Future<void> _handleResponseOrFail(
+    DataState<LoanRegistrationResponseEntity> res,
+    Emitter<LoanRegistrationState> emit, {
+    required String onSuccessLog,
+    required String onFailFallback,
+    Future<void> Function(LoanRegistrationResponseEntity resp)? onSuccess,
+  }) async {
+    if (res is DataSuccess<LoanRegistrationResponseEntity>) {
+      final resp = res.data;
+      if (kDebugMode) debugPrint('$onSuccessLog: ${resp?.toJson()}');
+
+      if (resp == null || !resp.isValid) {
+        emit(state.copyWith(
+          status: LoanRegStatus.failure,
+          error: resp?.validationErrorMessage ??
+              '$onFailFallback (invalid response)',
+        ));
+        return;
+      }
+
+      if (onSuccess != null) {
+        await onSuccess(resp); // don’t emit status here
+      }
+
+      emit(state.copyWith(status: LoanRegStatus.success));
+      return;
+    }
+
+    if (res is DataFailed) {
+      if (kDebugMode) debugPrint('$onFailFallback: ${res.error}');
+      emit(state.copyWith(
+        status: LoanRegStatus.failure,
+        error: res.error?.message ?? onFailFallback,
+      ));
+      return;
+    }
+
+    emit(state.copyWith(
+      status: LoanRegStatus.failure,
+      error: onFailFallback,
+    ));
   }
 
   // ---------- helpers ----------

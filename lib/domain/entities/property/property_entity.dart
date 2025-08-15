@@ -10,10 +10,10 @@ class PropertyEntity extends Equatable {
   final String? id;
 
   @JsonKey(name: 'intendedUsageType')
-  final String? intendedUsageType;
+  final dynamic intendedUsageType;
 
   @JsonKey(name: 'propertyType')
-  final String? propertyType;
+  final dynamic propertyType;
 
   @JsonKey(name: 'address')
   final PropertyAddressEntity? address;

@@ -4,33 +4,27 @@ import 'package:loan/domain/entities/borrower/borrower_info/borrower_entity.dart
 import 'package:loan/domain/entities/financial_assets/asset_entity.dart';
 import 'package:loan/domain/entities/property/property_entity.dart';
 
-part 'loan_registration_entity.g.dart';
+part 'loan_registration_response_entity.g.dart';
 
 @JsonSerializable()
-class LoanRegistrationEntity extends Equatable {
-  @JsonKey(name: 'loanOfficerId')
-  final String? loanOfficerId;
+class LoanRegistrationResponseEntity extends Equatable {
+  @JsonKey(name: 'borrowerBpUserId')
+  final dynamic borrowerBpUserId;
 
   @JsonKey(name: 'loanNumber')
   final dynamic loanNumber;
 
-  @JsonKey(name: 'branchId')
-  final String? branchId;
-
   @JsonKey(name: 'id')
-  final dynamic id;
+  final String? id;
 
   @JsonKey(name: 'borrower')
   final BorrowerEntity? borrower;
-
-  @JsonKey(name: 'coBorrower')
-  final BorrowerEntity? coBorrower;
 
   @JsonKey(name: 'assets', defaultValue: [])
   final List<AssetEntity>? assets;
 
   @JsonKey(name: 'loanPurpose')
-  final String? loanPurpose;
+  final dynamic loanPurpose;
 
   @JsonKey(name: 'subjectPropertyFoundIndicator')
   final bool? subjectPropertyFoundIndicator;
@@ -39,7 +33,7 @@ class LoanRegistrationEntity extends Equatable {
   final PropertyEntity? subjectProperty;
 
   @JsonKey(name: 'loanAmount')
-  final num? loanAmount;
+  final dynamic loanAmount;
 
   @JsonKey(name: 'refinanceCashOutDeterminationType')
   final String? refinanceCashOutDeterminationType;
@@ -50,13 +44,11 @@ class LoanRegistrationEntity extends Equatable {
   @JsonKey(name: 'refinanceYourPrimaryHome')
   final bool? refinanceYourPrimaryHome;
 
-  const LoanRegistrationEntity({
-    this.loanOfficerId,
+  const LoanRegistrationResponseEntity({
+    this.borrowerBpUserId,
     this.loanNumber,
-    this.branchId,
     this.id,
     this.borrower,
-    this.coBorrower,
     this.assets,
     this.loanPurpose,
     this.subjectPropertyFoundIndicator,
@@ -67,13 +59,17 @@ class LoanRegistrationEntity extends Equatable {
     this.refinanceYourPrimaryHome,
   });
 
+  factory LoanRegistrationResponseEntity.fromJson(Map<String, dynamic> json) =>
+      _$LoanRegistrationResponseEntityFromJson(json);
+
+  Map<String, dynamic> toJson() => _$LoanRegistrationResponseEntityToJson(this);
+
   @override
   List<Object?> get props => [
-        loanOfficerId,
-        branchId,
+        borrowerBpUserId,
+        loanNumber,
         id,
         borrower,
-        coBorrower,
         assets,
         loanPurpose,
         subjectPropertyFoundIndicator,
@@ -83,9 +79,4 @@ class LoanRegistrationEntity extends Equatable {
         desiredCashOut,
         refinanceYourPrimaryHome,
       ];
-
-  factory LoanRegistrationEntity.fromJson(Map<String, dynamic> json) =>
-      _$LoanRegistrationEntityFromJson(json);
-
-  Map<String, dynamic> toJson() => _$LoanRegistrationEntityToJson(this);
 }

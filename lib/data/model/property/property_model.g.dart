@@ -9,8 +9,8 @@ part of 'property_model.dart';
 PropertyModel _$PropertyModelFromJson(Map<String, dynamic> json) =>
     PropertyModel(
       id: json['id'] as String?,
-      intendedUsageType: json['intendedUsageType'] as String?,
-      propertyType: json['propertyType'] as String?,
+      intendedUsageType: json['intendedUsageType'],
+      propertyType: json['propertyType'],
       address: json['address'] == null
           ? null
           : PropertyAddressModel.fromJson(

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:loan/presentation/loan_registration/validators/borrower_view_validators.dart';
+import 'package:loan/presentation/loan_registration/validators/form_validators.dart';
 
 import 'package:loan/presentation/widgets/ui/section_header.dart';
 import 'package:loan/presentation/widgets/form_fields/form_textfield.dart';
@@ -24,7 +24,7 @@ class MailingAddressSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const borrValidator = BorrowerViewValidators.i;
+    const borrValidator = FormValidators.i;
     return Padding(
       padding: const EdgeInsets.all(20),
       child: ValueListenableBuilder<TextEditingValue>(
@@ -48,7 +48,6 @@ class MailingAddressSection extends StatelessWidget {
                   _copyCurrentAddress(val);
                 },
               ),
-
               _MailAddressLine1Field(
                 ctrl: borrControllers.mailAddressLine1Ctrl,
                 readOnly: same,
@@ -80,7 +79,7 @@ class _MailAddressLine1Field extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const borrValidator = BorrowerViewValidators.i;
+    const borrValidator = FormValidators.i;
     return Column(
       children: [
         const SizedBox(height: 16),
@@ -108,7 +107,7 @@ class _MailUnitAndCityRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const borrValidator = BorrowerViewValidators.i;
+    const borrValidator = FormValidators.i;
     return Padding(
       padding: const EdgeInsets.only(top: 16),
       child: Row(
@@ -150,7 +149,7 @@ class _MailStateAndZipRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const borrValidator = BorrowerViewValidators.i;
+    const borrValidator = FormValidators.i;
     return Padding(
       padding: const EdgeInsets.only(top: 16),
       child: Row(
@@ -183,7 +182,7 @@ class _MailStateAndZipRow extends StatelessWidget {
               keyboardType: TextInputType.number,
               inputFormatters: [
                 FilteringTextInputFormatter.digitsOnly,
-                LengthLimitingTextInputFormatter(10),
+                LengthLimitingTextInputFormatter(5),
               ],
               validator: (value) => borrValidator.zip(value, field: 'Zip Code'),
             ),

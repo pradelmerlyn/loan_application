@@ -16,7 +16,13 @@ class InitSteps extends LoanRegistrationEvent {
 }
 
 class NextStepsEvent extends LoanRegistrationEvent {
-  const NextStepsEvent();
+  final BorrowerEntity? borrower;            // used in step 1
+  final LoanRegistrationEntity? fullPayload; // used in final step
+
+  const NextStepsEvent({this.borrower, this.fullPayload});
+
+  @override
+  List<Object?> get props => [borrower, fullPayload];
 }
 
 class PrevStepsEvent extends LoanRegistrationEvent {

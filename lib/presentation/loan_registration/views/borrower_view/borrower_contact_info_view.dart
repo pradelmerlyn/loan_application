@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:loan/presentation/loan_registration/form_controllers/borrower_info_form_controllers.dart';
-import 'package:loan/presentation/loan_registration/validators/borrower_view_validators.dart';
+import 'package:loan/presentation/loan_registration/validators/form_validators.dart';
 import 'package:loan/presentation/widgets/form_fields/form_textfield.dart';
 import 'package:loan/presentation/widgets/ui/section_header.dart';
 
@@ -33,7 +33,8 @@ class _PhoneNumberField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const borrValidator = BorrowerViewValidators.i;
+    const borrValidator = FormValidators.i;
+
     return Column(
       children: [
         const SizedBox(height: 20),
@@ -43,9 +44,12 @@ class _PhoneNumberField extends StatelessWidget {
           keyboardType: TextInputType.phone,
           inputFormatters: [
             FilteringTextInputFormatter.digitsOnly,
-            LengthLimitingTextInputFormatter(15),
+            LengthLimitingTextInputFormatter(10),
           ],
-          validator: borrValidator.phone,
+          validator: borrValidator.validatePhone,
+          onSaved: (v) {
+            ctrl.text = borrValidator.formatPhone(v);
+          },
         ),
       ],
     );
@@ -58,7 +62,7 @@ class _EmailAddressField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const borrValidator = BorrowerViewValidators.i;
+    const borrValidator = FormValidators.i;
     return Column(
       children: [
         const SizedBox(height: 20),

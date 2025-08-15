@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:loan/presentation/loan_registration/validators/borrower_view_validators.dart';
+import 'package:loan/presentation/loan_registration/validators/form_validators.dart';
 import 'package:loan/presentation/widgets/form_fields/currency_formatter.dart';
 
 import 'package:loan/presentation/widgets/ui/section_header.dart';
@@ -26,7 +26,6 @@ class MonthlyHousingExpensesSection extends StatelessWidget {
         children: [
           const SectionHeader(label: 'Monthly Housing Expenses'),
           const SizedBox(height: 16),
-
           _TwoCols(
             left: _ExpenseField(
               label: 'Mortgage P&I',
@@ -40,7 +39,6 @@ class MonthlyHousingExpensesSection extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-
           _TwoCols(
             left: _ExpenseField(
               label: 'Property Tax',
@@ -54,7 +52,6 @@ class MonthlyHousingExpensesSection extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-
           _TwoCols(
             left: _ExpenseField(
               label: 'Home Insurance',
@@ -68,15 +65,12 @@ class MonthlyHousingExpensesSection extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-
           _ExpenseField(
             label: 'Other Housing',
             ctrl: c.otherHousingCtrl,
             field: HousingField.other,
           ),
-
           const SizedBox(height: 16),
-
           BlocBuilder<BorrowerViewBloc, BorrowerViewState>(
             buildWhen: (p, n) =>
                 p.totalHousingFormatted != n.totalHousingFormatted,
@@ -128,7 +122,7 @@ class _ExpenseField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const borrValidator = BorrowerViewValidators.i;
+    const borrValidator = FormValidators.i;
     return FormTextField(
       label: label,
       controller: ctrl,
@@ -137,8 +131,8 @@ class _ExpenseField extends StatelessWidget {
       onChanged: (text) {
         // Push raw text to the bloc; bloc will parse/format/sum
         context.read<BorrowerViewBloc>().add(
-          HousingExpenseChanged(field: field, text: text),
-        );
+              HousingExpenseChanged(field: field, text: text),
+            );
       },
       validator: (value) => borrValidator.requiredField(value, field: label),
     );

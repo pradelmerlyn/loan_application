@@ -1,52 +1,46 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'loan_registration_entity.dart';
+part of 'loan_registration_response_model.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-LoanRegistrationEntity _$LoanRegistrationEntityFromJson(
+LoanRegistrationResponseModel _$LoanRegistrationResponseModelFromJson(
         Map<String, dynamic> json) =>
-    LoanRegistrationEntity(
-      loanOfficerId: json['loanOfficerId'] as String?,
+    LoanRegistrationResponseModel(
+      borrowerBpUserId: json['borrowerBpUserId'],
       loanNumber: json['loanNumber'],
-      branchId: json['branchId'] as String?,
-      id: json['id'],
+      id: json['id'] as String?,
       borrower: json['borrower'] == null
           ? null
-          : BorrowerEntity.fromJson(json['borrower'] as Map<String, dynamic>),
-      coBorrower: json['coBorrower'] == null
-          ? null
-          : BorrowerEntity.fromJson(json['coBorrower'] as Map<String, dynamic>),
+          : BorrowerModel.fromJson(json['borrower'] as Map<String, dynamic>),
       assets: (json['assets'] as List<dynamic>?)
-              ?.map((e) => AssetEntity.fromJson(e as Map<String, dynamic>))
+              ?.map((e) => AssetModel.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
-      loanPurpose: json['loanPurpose'] as String?,
+      loanPurpose: json['loanPurpose'],
       subjectPropertyFoundIndicator:
           json['subjectPropertyFoundIndicator'] as bool?,
       subjectProperty: json['subjectProperty'] == null
           ? null
-          : PropertyEntity.fromJson(
+          : PropertyModel.fromJson(
               json['subjectProperty'] as Map<String, dynamic>),
-      loanAmount: json['loanAmount'] as num?,
+      loanAmount: json['loanAmount'],
       refinanceCashOutDeterminationType:
           json['refinanceCashOutDeterminationType'] as String?,
       desiredCashOut: (json['desiredCashOut'] as num?)?.toDouble(),
       refinanceYourPrimaryHome: json['refinanceYourPrimaryHome'] as bool?,
     );
 
-Map<String, dynamic> _$LoanRegistrationEntityToJson(
-    LoanRegistrationEntity instance) {
+Map<String, dynamic> _$LoanRegistrationResponseModelToJson(
+    LoanRegistrationResponseModel instance) {
   final val = <String, dynamic>{
-    'loanOfficerId': instance.loanOfficerId,
+    'borrowerBpUserId': instance.borrowerBpUserId,
     'loanNumber': instance.loanNumber,
-    'branchId': instance.branchId,
     'id': instance.id,
-    'borrower': instance.borrower,
-    'coBorrower': instance.coBorrower,
-    'assets': instance.assets,
+    'borrower': instance.borrower?.toJson(),
+    'assets': instance.assets?.map((e) => e.toJson()).toList(),
     'loanPurpose': instance.loanPurpose,
     'subjectPropertyFoundIndicator': instance.subjectPropertyFoundIndicator,
   };
@@ -57,7 +51,7 @@ Map<String, dynamic> _$LoanRegistrationEntityToJson(
     }
   }
 
-  writeNotNull('subjectProperty', instance.subjectProperty);
+  writeNotNull('subjectProperty', instance.subjectProperty?.toJson());
   val['loanAmount'] = instance.loanAmount;
   val['refinanceCashOutDeterminationType'] =
       instance.refinanceCashOutDeterminationType;

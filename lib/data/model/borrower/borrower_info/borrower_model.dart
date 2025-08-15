@@ -1,5 +1,4 @@
 import 'package:json_annotation/json_annotation.dart';
-
 // nested models
 import 'package:loan/data/model/borrower/borrower_bankruptcy/borrower_bankruptcy_model.dart';
 import 'package:loan/data/model/borrower/borrower_hmda/borrower_hmda_ethnicity_details_model.dart';
@@ -7,12 +6,19 @@ import 'package:loan/data/model/borrower/borrower_hmda/borrower_hmda_gender_deta
 import 'package:loan/data/model/borrower/borrower_hmda/borrower_hmda_race_details_model.dart';
 import 'package:loan/data/model/borrower/borrower_income/borrower_income_model.dart';
 import 'package:loan/data/model/borrower/borrower_info/borrower_current_address_model.dart';
-import 'package:loan/data/model/borrower/borrower_info/borrower_phone_number_model.dart';
+import 'package:loan/data/model/borrower/borrower_info/borrower_home_phone_number_model.dart';
 import 'package:loan/data/model/borrower/borrower_info/borrower_mailing_address_model.dart';
 import 'package:loan/data/model/borrower/borrower_info/borrower_previous_addresses_model.dart';
-
+import 'package:loan/domain/entities/borrower/borrower_bankruptcy/borrower_bankruptcy_entity.dart';
+import 'package:loan/domain/entities/borrower/borrower_hmda/borrower_hmda_ethnicity_details_entity.dart';
+import 'package:loan/domain/entities/borrower/borrower_hmda/borrower_hmda_gender_details_entity.dart';
+import 'package:loan/domain/entities/borrower/borrower_hmda/borrower_hmda_race_details_entity.dart';
+import 'package:loan/domain/entities/borrower/borrower_income/borrower_income_entity.dart';
+import 'package:loan/domain/entities/borrower/borrower_info/borrower_current_address_entity.dart';
 import 'package:loan/domain/entities/borrower/borrower_info/borrower_entity.dart';
-import 'package:loan/domain/entities/borrower/borrower_info/borrower_phone_number_entity.dart';
+import 'package:loan/domain/entities/borrower/borrower_info/borrower_home_phone_number_entity.dart';
+import 'package:loan/domain/entities/borrower/borrower_info/borrower_mailing_address_entity.dart';
+import 'package:loan/domain/entities/borrower/borrower_info/borrower_previous_addresses_entity.dart';
 
 part 'borrower_model.g.dart';
 
@@ -33,7 +39,7 @@ class BorrowerModel extends BorrowerEntity {
     super.spouseIsCoBorrowerIndicator,
     super.spouseEligibleForVABenefits,
     super.militaryServiceExpectedCompletionDate,
-    super.militaryServiceType,
+    super.militaryStatusType,
     super.isMailingAddressSameAsCurrent,
     super.intentToOccupy,
     super.homeownerPastThreeYears,
@@ -59,17 +65,18 @@ class BorrowerModel extends BorrowerEntity {
     super.action,
     super.currentTotalMonthlyHousingExpense,
     super.livedMoreThanTwoYears,
+    super.phoneNumbers,
 
     // nested models (FIX: phoneNumbers must be a LIST)
-    List<BorrowerPhoneNumberModel>? super.phoneNumbers,
-    BorrowerCurrentAddressModel? super.currentAddress,
-    List<BorrowerPreviousAddressesModel>? super.prevAddresses,
-    BorrowerMailingAddressModel? super.mailingAddress,
-    List<BorrowerIncomeModel>? super.incomes,
-    List<BorrowerBankruptcyModel>? super.bankruptcies,
-    BorrowerHmdaGenderDetailsModel? super.hmdaGenderDetails,
-    BorrowerHmdaEthnicityDetailsModel? super.hmdaEthnicityDetails,
-    BorrowerHmdaRaceDetailsModel? super.hmdaRaceDetails,
+    // List<BorrowerHomePhoneNumberModel>? super.phoneNumbers,
+    super.currentAddress,
+    super.addresses,
+    super.mailingAddress,
+    super.incomes,
+    super.bankruptcies,
+    super.hmdaGenderDetails,
+    super.hmdaEthnicityDetails,
+    super.hmdaRaceDetails,
   });
 
   /// Domain Entity -> Data Model
@@ -88,7 +95,7 @@ class BorrowerModel extends BorrowerEntity {
         spouseEligibleForVABenefits: e.spouseEligibleForVABenefits,
         militaryServiceExpectedCompletionDate:
             e.militaryServiceExpectedCompletionDate,
-        militaryServiceType: e.militaryServiceType,
+        militaryStatusType: e.militaryStatusType,
         isMailingAddressSameAsCurrent: e.isMailingAddressSameAsCurrent,
         intentToOccupy: e.intentToOccupy,
         homeownerPastThreeYears: e.homeownerPastThreeYears,
@@ -124,19 +131,20 @@ class BorrowerModel extends BorrowerEntity {
 
         // nested -> lists mapped element-by-element
         phoneNumbers: e.phoneNumbers
-            ?.map((p) => BorrowerPhoneNumberModel.fromEntity(p))
+            ?.map((p) => BorrowerHomePhoneNumberModel.fromEntity(p))
             .toList(),
         currentAddress: e.currentAddress != null
             ? BorrowerCurrentAddressModel.fromEntity(e.currentAddress!)
             : null,
-        prevAddresses: e.prevAddresses
+        addresses: e.addresses
             ?.map((x) => BorrowerPreviousAddressesModel.fromEntity(x))
             .toList(),
         mailingAddress: e.mailingAddress != null
             ? BorrowerMailingAddressModel.fromEntity(e.mailingAddress!)
             : null,
-        incomes:
-            e.incomes?.map((x) => BorrowerIncomeModel.fromEntity(x)).toList(),
+        incomes: e.incomes != null
+            ? e.incomes!.map((x) => BorrowerIncomeModel.fromEntity(x)).toList()
+            : [],
         bankruptcies: e.bankruptcies
             ?.map((x) => BorrowerBankruptcyModel.fromEntity(x))
             .toList(),
@@ -158,7 +166,4 @@ class BorrowerModel extends BorrowerEntity {
 
   @override
   Map<String, dynamic> toJson() => _$BorrowerModelToJson(this);
-
-  @override
-  List<Object?> get props => super.props;
 }

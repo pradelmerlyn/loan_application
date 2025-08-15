@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:loan/presentation/loan_registration/form_controllers/borrower_info_form_controllers.dart';
-import 'package:loan/presentation/loan_registration/validators/borrower_view_validators.dart';
+import 'package:loan/presentation/loan_registration/validators/form_validators.dart';
 import 'package:loan/presentation/widgets/form_fields/dropdown_field.dart';
 import 'package:loan/presentation/widgets/form_fields/form_textfield.dart';
 import 'package:loan/presentation/widgets/ui/section_header.dart';
@@ -44,7 +44,7 @@ class _MilitaryServiceTypeField extends StatefulWidget {
 class _MilitaryServiceTypeFieldState extends State<_MilitaryServiceTypeField> {
   @override
   Widget build(BuildContext context) {
-    const borrValidator = BorrowerViewValidators.i;
+    const borrValidator = FormValidators.i;
     return Column(
       children: [
         const SizedBox(height: 15),
@@ -53,21 +53,11 @@ class _MilitaryServiceTypeFieldState extends State<_MilitaryServiceTypeField> {
           value: widget.ctrl.text.isEmpty ? null : widget.ctrl.text,
           items: const [
             DropdownMenuItem(value: "None", child: Text("None")),
-            DropdownMenuItem(value: "Active Duty", child: Text("Active Duty")),
-            DropdownMenuItem(value: "Reserve", child: Text("Reserve")),
+            DropdownMenuItem(value: "ActiveDuty", child: Text("Active Duty")),
             DropdownMenuItem(
-              value: "National Guard",
-              child: Text("National Guard"),
-            ),
+                value: "ReserveNationalGuardNeverActivated",
+                child: Text("Reserve")),
             DropdownMenuItem(value: "Veteran", child: Text("Veteran")),
-            DropdownMenuItem(
-              value: "Retired Military",
-              child: Text("Retired Military"),
-            ),
-            DropdownMenuItem(
-              value: "Surviving Spouse of Veteran",
-              child: Text("Surviving Spouse of Veteran"),
-            ),
           ],
           onChanged: (value) {
             setState(() {
@@ -90,7 +80,7 @@ class _ExpirationTermServiceField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const borrValidator = BorrowerViewValidators.i;
+    const borrValidator = FormValidators.i;
     return Column(
       children: [
         const SizedBox(height: 15),
@@ -128,7 +118,7 @@ class _VASurvivingSpouseField extends StatelessWidget {
   const _VASurvivingSpouseField({required this.ctrl});
   @override
   Widget build(BuildContext context) {
-    //final borrValidator = BorrowerViewValidators();
+    //final borrValidator = FormValidators();
     return Column(
       children: [
         const SizedBox(height: 15),

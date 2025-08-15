@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:loan/presentation/loan_registration/validators/borrower_view_validators.dart';
+import 'package:loan/presentation/loan_registration/validators/form_validators.dart';
 import 'package:loan/presentation/widgets/ui/section_header.dart';
 import 'package:loan/presentation/widgets/form_fields/form_textfield.dart';
 import 'package:loan/presentation/widgets/form_fields/dropdown_field.dart';
@@ -48,7 +48,7 @@ class _HousingStatusField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const borrValidator = BorrowerViewValidators.i;
+    const borrValidator = FormValidators.i;
     return Column(
       children: [
         const SizedBox(height: 15),
@@ -79,7 +79,7 @@ class _MonthlyRentField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const borrValidator = BorrowerViewValidators.i;
+    const borrValidator = FormValidators.i;
     return Column(
       children: [
         const SizedBox(height: 15),
@@ -104,7 +104,7 @@ class _StartDateField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const borrValidator = BorrowerViewValidators.i;
+    const borrValidator = FormValidators.i;
     return Column(
       children: [
         const SizedBox(height: 15),
@@ -141,7 +141,7 @@ class _OccupancyTypeField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const borrValidator = BorrowerViewValidators.i;
+    const borrValidator = FormValidators.i;
     return Column(
       children: [
         const SizedBox(height: 15),
@@ -172,7 +172,7 @@ class _AddressLine1Field extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const borrValidator = BorrowerViewValidators.i;
+    const borrValidator = FormValidators.i;
     return Column(
       children: [
         const SizedBox(height: 15),
@@ -194,7 +194,7 @@ class _UnitAndCityRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const borrValidator = BorrowerViewValidators.i;
+    const borrValidator = FormValidators.i;
     return Padding(
       padding: const EdgeInsets.only(top: 16),
       child: Row(
@@ -224,7 +224,7 @@ class _StateAndZipRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const borrValidator = BorrowerViewValidators.i;
+    const borrValidator = FormValidators.i;
     return Padding(
       padding: const EdgeInsets.only(top: 16),
       child: Row(
@@ -255,7 +255,7 @@ class _StateAndZipRow extends StatelessWidget {
               keyboardType: TextInputType.number,
               inputFormatters: [
                 FilteringTextInputFormatter.digitsOnly,
-                LengthLimitingTextInputFormatter(10),
+                LengthLimitingTextInputFormatter(5),
               ],
               validator: (value) => borrValidator.zip(value, field: 'Zip Code'),
             ),

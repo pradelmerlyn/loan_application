@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loan/presentation/loan_registration/bloc/borrower_view/borrower_view_bloc.dart';
 import 'package:loan/presentation/loan_registration/form_controllers/borrower_info_form_controllers.dart';
-import 'package:loan/presentation/loan_registration/validators/borrower_view_validators.dart';
+import 'package:loan/presentation/loan_registration/validators/form_validators.dart';
 import 'package:loan/presentation/widgets/form_fields/dropdown_field.dart';
 import 'package:loan/presentation/widgets/form_fields/form_textfield.dart';
 import 'package:loan/presentation/widgets/form_fields/multivalue_input_field.dart';
@@ -61,7 +61,7 @@ class _SSNField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const v = BorrowerViewValidators.i; // your singleton helper
+    const v = FormValidators.i;
 
     return BlocBuilder<BorrowerViewBloc, BorrowerViewState>(
       // we can rebuild on any change; it's cheap
@@ -119,7 +119,7 @@ class _FirstNameField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const borrValidator = BorrowerViewValidators.i;
+    const borrValidator = FormValidators.i;
     return Column(
       children: [
         const SizedBox(height: 15),
@@ -140,7 +140,7 @@ class _MiddleNameField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const borrValidator = BorrowerViewValidators.i;
+    const borrValidator = FormValidators.i;
     return Column(
       children: [
         const SizedBox(height: 15),
@@ -165,7 +165,7 @@ class _LastNameSuffixField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const borrValidator = BorrowerViewValidators.i;
+    const borrValidator = FormValidators.i;
     return Padding(
       padding: const EdgeInsets.only(top: 20),
       child: Row(
@@ -195,7 +195,7 @@ class _DateOfBirthField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const borrValidator = BorrowerViewValidators.i;
+    const borrValidator = FormValidators.i;
     return Column(
       children: [
         const SizedBox(height: 15),
@@ -236,7 +236,7 @@ class _MaritalStatusField extends StatefulWidget {
 class _MaritalStatusFieldState extends State<_MaritalStatusField> {
   @override
   Widget build(BuildContext context) {
-    const borrValidator = BorrowerViewValidators.i;
+    const borrValidator = FormValidators.i;
     return Column(
       children: [
         const SizedBox(height: 15),
@@ -244,10 +244,9 @@ class _MaritalStatusFieldState extends State<_MaritalStatusField> {
           label: "Marital Status",
           value: widget.ctrl.text.isEmpty ? null : widget.ctrl.text,
           items: const [
-            DropdownMenuItem(value: "Single", child: Text("Single")),
             DropdownMenuItem(value: "Married", child: Text("Married")),
-            DropdownMenuItem(value: "Divorced", child: Text("Divorced")),
-            DropdownMenuItem(value: "Widowed", child: Text("Widowed")),
+            DropdownMenuItem(value: "Separated", child: Text("Separated")),
+            DropdownMenuItem(value: "Unmarried", child: Text("Unmarried")),
           ],
           onChanged: (value) {
             setState(() {
@@ -273,7 +272,7 @@ class _CitizenShipField extends StatefulWidget {
 class _CitizenShipFieldState extends State<_CitizenShipField> {
   @override
   Widget build(BuildContext context) {
-    const borrValidator = BorrowerViewValidators.i;
+    const borrValidator = FormValidators.i;
     return Column(
       children: [
         const SizedBox(height: 15),
@@ -325,9 +324,8 @@ class _DependentAgesField extends StatelessWidget {
             if (values == null || values.isEmpty) {
               return "Please enter at least one age";
             }
-            final nonNumeric = values
-                .where((v) => int.tryParse(v) == null)
-                .toList();
+            final nonNumeric =
+                values.where((v) => int.tryParse(v) == null).toList();
             if (nonNumeric.isNotEmpty) return "Ages must be numbers";
             return null;
           },
