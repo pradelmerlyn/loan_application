@@ -1,21 +1,99 @@
+import 'package:loan/domain/entities/borrower/borrower_info/borrower_entity.dart';
 import 'package:loan/domain/entities/loan_registration/loan_registration_entity.dart';
+import 'package:loan/presentation/assets/form_controllers/asset_form_controllers.dart';
 import 'package:loan/presentation/loan_registration/form_controllers/borrower_info_form_controllers.dart';
 import 'package:loan/presentation/loan_registration/form_controllers/property_info_form_controllers.dart';
-import 'package:loan/presentation/assets/form_controllers/asset_form_controllers.dart';
 import 'package:loan/presentation/loan_registration/form_helpers/borrower_payload_builder.dart';
 
+/// Keep this builder PURE. Pass IDs in — don't reach into GetIt/Bloc here.
 LoanRegistrationEntity buildLoanRegistrationEntityFromControllers({
   required BorrowerInfoFormControllers borrowerCtrls,
   required PropertyInfoFormControllers propertyCtrls,
   required AssetFormControllers financialCtrl,
+
+  /// IDs captured from the first API response (Bloc/state should supply these)
+  int? loanNumber, // <- GUID (maps to LoanRegistrationEntity.id)
+  String? borrowerId, // <- GUID (maps to BorrowerEntity.id)
 }) {
-  final borrower = buildBorrowerFromForm(borrowerCtrls);
+  // Build the borrower from the form
+  final borrowerFromForm = buildBorrowerFromForm(borrowerCtrls);
+
+  // Rebuild borrower with injected ID 
+  final borrowerWithId = BorrowerEntity(
+    id: borrowerId, // <---- inject here
+    firstName: borrowerFromForm.firstName,
+    middleName: borrowerFromForm.middleName,
+    lastName: borrowerFromForm.lastName,
+    suffixName: borrowerFromForm.suffixName,
+    dateOfBirth: borrowerFromForm.dateOfBirth,
+    taxIdentifier: borrowerFromForm.taxIdentifier,
+    emailAddress: borrowerFromForm.emailAddress,
+    phoneNumbers: borrowerFromForm.phoneNumbers,
+    maritalStatus: borrowerFromForm.maritalStatus,
+    dependentAges: borrowerFromForm.dependentAges,
+    spouseIsCoBorrowerIndicator: borrowerFromForm.spouseIsCoBorrowerIndicator,
+    spouseEligibleForVABenefits: borrowerFromForm.spouseEligibleForVABenefits,
+    militaryServiceExpectedCompletionDate:
+        borrowerFromForm.militaryServiceExpectedCompletionDate,
+    militaryStatusType: borrowerFromForm.militaryStatusType,
+    currentAddress: borrowerFromForm.currentAddress,
+    addresses: borrowerFromForm.addresses,
+    isMailingAddressSameAsCurrent:
+        borrowerFromForm.isMailingAddressSameAsCurrent,
+    mailingAddress: borrowerFromForm.mailingAddress,
+    incomes: borrowerFromForm.incomes,
+    intentToOccupy: borrowerFromForm.intentToOccupy,
+    homeownerPastThreeYears: borrowerFromForm.homeownerPastThreeYears,
+    priorPropertyUsageType: borrowerFromForm.priorPropertyUsageType,
+    priorPropertyTitleType: borrowerFromForm.priorPropertyTitleType,
+    specialBorrowerSellerRelationshipIndicator:
+        borrowerFromForm.specialBorrowerSellerRelationshipIndicator,
+    undisclosedBorrowedFundsIndicator:
+        borrowerFromForm.undisclosedBorrowedFundsIndicator,
+    undisclosedBorrowedFundsAmount:
+        borrowerFromForm.undisclosedBorrowedFundsAmount,
+    undisclosedMortgageApplicationIndicator:
+        borrowerFromForm.undisclosedMortgageApplicationIndicator,
+    undisclosedCreditApplicationIndicator:
+        borrowerFromForm.undisclosedCreditApplicationIndicator,
+    propertySubjectToPriorityLienIndicator:
+        borrowerFromForm.propertySubjectToPriorityLienIndicator,
+    undisclosedComakerOfNoteIndicator:
+        borrowerFromForm.undisclosedComakerOfNoteIndicator,
+    outstandingJudgmentsIndicator:
+        borrowerFromForm.outstandingJudgmentsIndicator,
+    partyToLawsuitIndicator: borrowerFromForm.partyToLawsuitIndicator,
+    presentlyDelinquentIndicator: borrowerFromForm.presentlyDelinquentIndicator,
+    priorPropertyDeedInLieuConveyedIndicator:
+        borrowerFromForm.priorPropertyDeedInLieuConveyedIndicator,
+    deedInLieuLatestCompletionDate:
+        borrowerFromForm.deedInLieuLatestCompletionDate,
+    priorPropertyShortSaleCompletedIndicator:
+        borrowerFromForm.priorPropertyShortSaleCompletedIndicator,
+    shortSaleLatestCompletionDate:
+        borrowerFromForm.shortSaleLatestCompletionDate,
+    priorPropertyForeclosureCompletedIndicator:
+        borrowerFromForm.priorPropertyForeclosureCompletedIndicator,
+    foreclosureLatestCompletionDate:
+        borrowerFromForm.foreclosureLatestCompletionDate,
+    bankruptcyIndicator: borrowerFromForm.bankruptcyIndicator,
+    bankruptcies: borrowerFromForm.bankruptcies,
+    hmdaGenderDetails: borrowerFromForm.hmdaGenderDetails,
+    hmdaEthnicityDetails: borrowerFromForm.hmdaEthnicityDetails,
+    hmdaRaceDetails: borrowerFromForm.hmdaRaceDetails,
+    action: borrowerFromForm.action,
+    currentTotalMonthlyHousingExpense:
+        borrowerFromForm.currentTotalMonthlyHousingExpense,
+    livedMoreThanTwoYears: borrowerFromForm.livedMoreThanTwoYears,
+  );
 
   return LoanRegistrationEntity(
+    loanNumber: loanNumber, // <---- use applicationId (GUID) here, NOT loanNumber
     loanOfficerId: 'mmaine',
     loanPurpose: 'Purchase',
     loanAmount: 0,
-    borrower: borrower,
+    borrower: borrowerWithId,
     subjectPropertyFoundIndicator: true,
+    // add other fields from propertyCtrls / financialCtrl if needed
   );
 }

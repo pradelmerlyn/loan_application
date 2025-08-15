@@ -12,6 +12,7 @@ class FormTextField extends StatelessWidget {
   final TextInputType? keyboardType;
   final TextCapitalization textCapitalization;
   final FormFieldValidator<String>? validator;
+  final FormFieldSetter<String>? onSaved;
   final ValueChanged<String>? onChanged;
   final List<TextInputFormatter>? inputFormatters;
   final bool enableInteractiveSelection;
@@ -31,6 +32,7 @@ class FormTextField extends StatelessWidget {
     this.keyboardType,
     this.textCapitalization = TextCapitalization.none,
     this.validator,
+    this.onSaved,
     this.onChanged,
     this.inputFormatters,
     this.enableInteractiveSelection = true,
@@ -55,6 +57,7 @@ class FormTextField extends StatelessWidget {
       keyboardType: keyboardType,
       textCapitalization: textCapitalization,
       validator: validator,
+      onSaved: onSaved,
       onChanged: onChanged,
       inputFormatters: inputFormatters,
       enableInteractiveSelection: enableInteractiveSelection,

@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:loan/domain/entities/borrower/borrower_info/borrower_previous_addresses_entity.dart';
 
 import 'package:loan/domain/entities/loan_registration/loan_registration_entity.dart';
 import 'package:loan/domain/entities/borrower/borrower_info/borrower_entity.dart';
@@ -14,7 +15,12 @@ class LoanRegistrationState extends Equatable {
   final List<bool> completed; // per-step flags (0-based)
   final String stepLabel;
   final String buttonLabel;
-  final int completionPercentage; // 0..100
+  final int completionPercentage;
+
+  // holders for application response in step 1
+  final String? loanId;
+  final int? loanNumber;
+  final String? borrowerId;
 
   final LoanRegStatus status;
   final String? error;
@@ -24,6 +30,7 @@ class LoanRegistrationState extends Equatable {
   final BorrowerEntity borrower;
   final BorrowerEntity? coBorrower;
   final List<AssetEntity> assets;
+  final List<BorrowerPreviousAddressesEntity> addresses;
   final PropertyEntity? subjectProperty;
 
   final String? loanPurpose;
@@ -41,6 +48,9 @@ class LoanRegistrationState extends Equatable {
     this.stepLabel = 'Borrower',
     this.buttonLabel = 'Next',
     this.completionPercentage = 0,
+    this.loanId = "",
+    this.loanNumber = 0,
+    this.borrowerId = "",
 
     // status
     this.status = LoanRegStatus.idle,
@@ -53,6 +63,7 @@ class LoanRegistrationState extends Equatable {
     this.borrower = const BorrowerEntity(),
     this.coBorrower,
     this.assets = const [],
+    this.addresses = const [],
     this.subjectProperty,
     this.loanPurpose,
     this.subjectPropertyFoundIndicator = false,
@@ -67,6 +78,7 @@ class LoanRegistrationState extends Equatable {
 
   LoanRegistrationEntity get payload => LoanRegistrationEntity(
         loanOfficerId: 'mmaine',
+        loanNumber: loanNumber,
         borrower: borrower,
         coBorrower: coBorrower,
         assets: assets,
@@ -96,6 +108,9 @@ class LoanRegistrationState extends Equatable {
     // result
     LoanRegistrationEntity? registration,
     bool clearRegistration = false,
+    String? loanId,
+    int? loanNumber,
+    String? borrowerId,
 
     // data
     BorrowerEntity? borrower,
@@ -125,6 +140,9 @@ class LoanRegistrationState extends Equatable {
       // result
       registration:
           clearRegistration ? null : (registration ?? this.registration),
+      loanId: loanId ?? this.loanId,
+      loanNumber: loanNumber ?? this.loanNumber,
+      borrowerId: borrowerId ?? this.borrowerId,
 
       // data
       borrower: borrower ?? this.borrower,
@@ -159,11 +177,15 @@ class LoanRegistrationState extends Equatable {
 
         // result
         registration,
+        loanId,
+        loanNumber,
+        borrowerId,
 
         // data
         borrower,
         coBorrower,
         assets,
+        addresses,
         subjectProperty,
         loanPurpose,
         subjectPropertyFoundIndicator,

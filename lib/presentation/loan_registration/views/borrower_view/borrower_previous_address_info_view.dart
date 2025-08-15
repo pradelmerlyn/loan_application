@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:loan/presentation/loan_registration/validators/borrower_view_validators.dart';
+import 'package:loan/presentation/loan_registration/validators/form_validators.dart';
 
 import 'package:loan/presentation/widgets/ui/section_header.dart';
 import 'package:loan/presentation/widgets/form_fields/form_textfield.dart';
@@ -46,7 +46,7 @@ class _PrevAddressLine1Field extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const borrValidator = BorrowerViewValidators.i;
+    const borrValidator = FormValidators.i;
     return Column(
       children: [
         const SizedBox(height: 16),
@@ -68,7 +68,7 @@ class _PrevUnitAndCityRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const borrValidator = BorrowerViewValidators.i;
+    const borrValidator = FormValidators.i;
     return Padding(
       padding: const EdgeInsets.only(top: 16),
       child: Row(
@@ -103,7 +103,7 @@ class _PrevStateAndZipRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const borrValidator = BorrowerViewValidators.i;
+    const borrValidator = FormValidators.i;
     return Padding(
       padding: const EdgeInsets.only(top: 16),
       child: Row(
@@ -134,7 +134,7 @@ class _PrevStateAndZipRow extends StatelessWidget {
               keyboardType: TextInputType.number,
               inputFormatters: [
                 FilteringTextInputFormatter.digitsOnly,
-                LengthLimitingTextInputFormatter(10),
+                LengthLimitingTextInputFormatter(5),
               ],
               validator: (value) => borrValidator.zip(value, field: 'Zip Code'),
             ),
@@ -171,7 +171,7 @@ class _PrevStartAndEndDatesRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const borrValidator = BorrowerViewValidators.i;
+    const borrValidator = FormValidators.i;
     return Padding(
       padding: const EdgeInsets.only(top: 16),
       child: Row(

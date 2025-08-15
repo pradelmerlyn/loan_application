@@ -24,15 +24,15 @@ class _LoanRegistrationService implements LoanRegistrationService {
   final ParseErrorLogger? errorLogger;
 
   @override
-  Future<HttpResponse<LoanRegistrationModel>> createBorrowerStep(
-      LoanRegistrationModel payload) async {
+  Future<HttpResponse<LoanRegistrationResponseModel>> createBorrowerStep(
+      Map<String, dynamic> payload) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    _data.addAll(payload.toJson());
+    _data.addAll(payload);
     final _options =
-        _setStreamType<HttpResponse<LoanRegistrationModel>>(Options(
+        _setStreamType<HttpResponse<LoanRegistrationResponseModel>>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
@@ -49,9 +49,9 @@ class _LoanRegistrationService implements LoanRegistrationService {
               baseUrl,
             )));
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late LoanRegistrationModel _value;
+    late LoanRegistrationResponseModel _value;
     try {
-      _value = LoanRegistrationModel.fromJson(_result.data!);
+      _value = LoanRegistrationResponseModel.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;
@@ -61,15 +61,15 @@ class _LoanRegistrationService implements LoanRegistrationService {
   }
 
   @override
-  Future<HttpResponse<LoanRegistrationModel>> submitApplication(
-      LoanRegistrationModel payload) async {
+  Future<HttpResponse<LoanRegistrationResponseModel>> submitApplication(
+      Map<String, dynamic> payload) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    _data.addAll(payload.toJson());
+    _data.addAll(payload);
     final _options =
-        _setStreamType<HttpResponse<LoanRegistrationModel>>(Options(
+        _setStreamType<HttpResponse<LoanRegistrationResponseModel>>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
@@ -86,9 +86,9 @@ class _LoanRegistrationService implements LoanRegistrationService {
               baseUrl,
             )));
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late LoanRegistrationModel _value;
+    late LoanRegistrationResponseModel _value;
     try {
-      _value = LoanRegistrationModel.fromJson(_result.data!);
+      _value = LoanRegistrationResponseModel.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;

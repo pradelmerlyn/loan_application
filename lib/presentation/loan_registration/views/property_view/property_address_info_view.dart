@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:loan/presentation/loan_registration/form_controllers/property_info_form_controllers.dart';
+import 'package:loan/presentation/loan_registration/validators/form_validators.dart';
 import 'package:loan/presentation/widgets/ui/section_header.dart';
 import 'package:loan/presentation/widgets/form_fields/form_textfield.dart';
 import 'package:loan/presentation/widgets/form_fields/dropdown_field.dart';
@@ -48,6 +49,7 @@ class _YearBuiltField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const v = FormValidators.i;
     return FormTextField(
       label: 'What year was the property built?',
       controller: ctrl,
@@ -56,16 +58,8 @@ class _YearBuiltField extends StatelessWidget {
         FilteringTextInputFormatter.digitsOnly,
         LengthLimitingTextInputFormatter(4),
       ],
-      validator: (v) {
-        final t = (v ?? '').trim();
-        if (t.isEmpty) return 'Year built is required';
-        final y = int.tryParse(t);
-        final now = DateTime.now().year;
-        if (y == null || y < 1800 || y > now) {
-          return 'Enter a valid year (1800–$now)';
-        }
-        return null;
-      },
+      validator: (value) =>
+          v.requiredField(value, field: 'Property Year Built'),
     );
   }
 }
@@ -76,11 +70,12 @@ class _AddressLine1Field extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const v = FormValidators.i;
     return FormTextField(
       label: 'Address Line 1',
       controller: ctrl,
-      validator: (v) =>
-          (v ?? '').trim().isEmpty ? 'Address Line 1 is required' : null,
+      validator: (value) =>
+          v.requiredField(value, field: 'Address Line 1'),
     );
   }
 }
@@ -92,6 +87,7 @@ class _AptAndCityRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const v = FormValidators.i;
     return Row(
       children: [
         Expanded(
@@ -103,8 +99,8 @@ class _AptAndCityRow extends StatelessWidget {
             label: 'City',
             controller: cityCtrl,
             textCapitalization: TextCapitalization.words,
-            validator: (v) =>
-                (v ?? '').trim().isEmpty ? 'City is required' : null,
+            validator: (value) =>
+                v.requiredField(value, field: 'City'),
           ),
         ),
       ],
@@ -119,6 +115,7 @@ class _CountyAndStateRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const v = FormValidators.i;
     return Row(
       children: [
         Expanded(
@@ -143,8 +140,8 @@ class _CountyAndStateRow extends StatelessWidget {
               DropdownMenuItem(value: 'Texas', child: Text('Texas')),
             ],
             onChanged: (v) => stateCtrl.text = v ?? '',
-            validator: (v) =>
-                (v == null || v.isEmpty) ? 'Please select a state' : null,
+            validator: (value) =>
+                v.requiredField(value, field: 'County'),
           ),
         ),
       ],
@@ -158,6 +155,7 @@ class _ZipRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const v = FormValidators.i;
     return Row(
       children: [
         Expanded(
@@ -169,12 +167,7 @@ class _ZipRow extends StatelessWidget {
               FilteringTextInputFormatter.digitsOnly,
               LengthLimitingTextInputFormatter(5), // 5-digit ZIP
             ],
-            validator: (v) {
-              final t = (v ?? '').trim();
-              if (t.isEmpty) return 'Zip Code is required';
-              if (t.length != 5) return 'Enter a 5-digit ZIP code';
-              return null;
-            },
+            validator: (value) => v.requiredField(value, field: 'Zip Code'),
           ),
         ),
         const SizedBox(width: 16),

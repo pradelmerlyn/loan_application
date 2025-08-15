@@ -1,13 +1,12 @@
+import 'package:flutter/material.dart';
 
-
-class BorrowerViewValidators {
-  const BorrowerViewValidators._();
-
-  static const BorrowerViewValidators i = BorrowerViewValidators._();
+class FormValidators {
+  const FormValidators._();
+  static const FormValidators i = FormValidators._();
 
   /* ===================== Low-level helpers ===================== */
 
-  String _digitsOnly(String v) => v.replaceAll(RegExp(r'[^0-9]'), '');
+  String _digitsOnly(String v) => v.replaceAll(RegExp(r'\D'), '');
 
   String _formatSsn(String raw) {
     final d = _digitsOnly(raw);
@@ -25,7 +24,6 @@ class BorrowerViewValidators {
     return d.length <= 4 ? last4 : '***-**-$last4';
   }
 
-
   String ssnDisplay(String raw, {required bool obscure}) =>
       obscure ? _maskSsn(raw) : _formatSsn(raw);
 
@@ -36,14 +34,12 @@ class BorrowerViewValidators {
     return '$mm/$dd/$yy';
   }
 
-  /// Parse currency-like input (allows $, commas, dots). Returns 0 on empty/invalid.
   double toAmount(String s) {
     final t = s.replaceAll(RegExp(r'[^0-9.]'), '');
     if (t.isEmpty) return 0;
     return double.tryParse(t) ?? 0;
   }
 
-  /// Format currency with optional decimals (defaults to 0). Example: `$12,345` or `$12,345.67`
   String fmtCurrency(num v, {int decimals = 0}) {
     final str = v.toStringAsFixed(decimals);
     final parts = str.split('.');
@@ -63,23 +59,33 @@ class BorrowerViewValidators {
 
   /* ===================== Validators ===================== */
 
-  /// Generic required validator
   String? requiredField(String? value, {required String field}) {
-    if (value == null || value.trim().isEmpty) return '$field is required';
+   // if ((value ?? '').trim().isEmpty) return '$field is required';
     return null;
   }
 
-  /// Phone validator (minLen default 7)
-  String? phone(String? value,
+  /// Use in TextFormField.validator
+  String? validatePhone(String? value,
       {String field = 'Phone Number', int minLen = 7}) {
     final req = requiredField(value, field: field);
     if (req != null) return req;
-    final d = _digitsOnly(value ?? '');
-    if (d.length < minLen) return 'Enter a valid phone number';
-    return null;
+
+    final digits = _digitsOnly(value!);
+    if (digits.length < minLen) return 'Enter a valid phone number';
+    if (digits.length != 10) return 'Enter a 10-digit phone number';
+    return null; // valid
   }
 
-  /// Email validator (simple practical regex)
+  /// Call this when you want to display `(XXX) XXX-XXXX`
+  String formatPhone(String? value) {
+    final digits = _digitsOnly(value ?? '');
+    if (digits.length != 10) return value ?? '';
+    final area = digits.substring(0, 3);
+    final prefix = digits.substring(3, 6);
+    final line = digits.substring(6);
+    return '($area) $prefix-$line';
+  }
+
   String? email(String? value, {String field = 'Email Address'}) {
     final req = requiredField(value, field: field);
     if (req != null) return req;
@@ -91,12 +97,48 @@ class BorrowerViewValidators {
     return null;
   }
 
-  /// ZIP validator (default 5–10; supports ZIP+4 if desired)
   String? zip(String? value,
       {String field = 'Zip Code', int min = 5, int max = 10}) {
     final t = (value ?? '').trim();
     if (t.isEmpty) return '$field is required';
     if (t.length < min || t.length > max) return 'Enter a valid zip code';
     return null;
+  }
+
+  // date helpers
+  DateTime? dateFromTextCtrl(
+    TextEditingController? controller, {
+    DateTime? fallback,
+  }) {
+    final raw = controller?.text.trim();
+    if (raw == null || raw.isEmpty) return fallback;
+    return DateTime.tryParse(raw) ?? fallback;
+  }
+
+  DateTime? dateFromString(
+    String? raw, {
+    DateTime? fallback,
+  }) {
+    final txt = raw?.trim();
+    if (txt == null || txt.isEmpty) return fallback;
+    return DateTime.tryParse(txt) ?? fallback;
+  }
+
+  // boolean - dropdown 
+
+  bool boolFromTextCtrl(
+    TextEditingController? controller, {
+    bool fallback = false,
+  }) {
+    final raw = controller?.text.trim().toLowerCase() ?? '';
+    if (raw.isEmpty) return fallback;
+
+    if (raw == 'true' || raw == 'yes' || raw == 'y' || raw == '1') {
+      return true;
+    }
+    if (raw == 'false' || raw == 'no' || raw == 'n' || raw == '0') {
+      return false;
+    }
+    return fallback;
   }
 }

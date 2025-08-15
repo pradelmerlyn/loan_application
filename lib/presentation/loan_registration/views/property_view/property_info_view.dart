@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:loan/presentation/loan_registration/form_controllers/property_info_form_controllers.dart';
+import 'package:loan/presentation/loan_registration/validators/form_validators.dart';
 import 'package:loan/presentation/widgets/ui/section_header.dart';
 import 'package:loan/presentation/widgets/form_fields/dropdown_field.dart';
 import 'package:loan/presentation/widgets/form_fields/form_textfield.dart';
@@ -44,24 +45,21 @@ class PropertyInfoSection extends StatelessWidget {
 class _LoanPurposeField extends StatelessWidget {
   final TextEditingController ctrl;
   const _LoanPurposeField({required this.ctrl});
+  
 
   @override
   Widget build(BuildContext context) {
+    const v = FormValidators.i;
     return DropDownField<String>(
       label: 'What is the purpose of your loan?',
       value: ctrl.text.isEmpty ? null : ctrl.text,
       items: const [
         DropdownMenuItem(value: 'Purchase', child: Text('Purchase')),
         DropdownMenuItem(value: 'Refinance', child: Text('Refinance')),
-        DropdownMenuItem(
-          value: 'Cash-Out Refinance',
-          child: Text('Cash-Out Refinance'),
-        ),
-        DropdownMenuItem(value: 'Home Equity', child: Text('Home Equity')),
       ],
       onChanged: (v) => ctrl.text = v ?? '',
-      validator: (v) =>
-          (v == null || v.isEmpty) ? 'Please select a loan purpose' : null,
+      validator: (value) =>
+          v.requiredField(value, field: 'Loan Purpose'),
     );
   }
 }
@@ -104,19 +102,22 @@ class _PropertyTypeField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const v = FormValidators.i;
     return DropDownField<String>(
       label: 'What type of property are you looking for?',
       value: ctrl.text.isEmpty ? null : ctrl.text,
       items: const [
-        DropdownMenuItem(value: 'Single-Family', child: Text('Single-Family')),
-        DropdownMenuItem(value: 'Condo', child: Text('Condo')),
-        DropdownMenuItem(value: 'Townhouse', child: Text('Townhouse')),
-        DropdownMenuItem(value: '2-4 Unit', child: Text('2-4 Unit')),
-        DropdownMenuItem(value: 'Manufactured', child: Text('Manufactured')),
+        DropdownMenuItem(value: 'SingleFamily', child: Text('Single Family')),
+        DropdownMenuItem(value: 'Condominium', child: Text('Condominium')),
+        DropdownMenuItem(value: 'Cooperative', child: Text('Cooperative')),
+        DropdownMenuItem(value: 'TwoToFourUnitProperty', child: Text('2-4 Unit')),
+        DropdownMenuItem(value: 'ManufacturedHome', child: Text('Manufactured')),
+        DropdownMenuItem(value: 'PlannedUnitDevelopment', child: Text('Planned Unit')),
+        DropdownMenuItem(value: 'Land', child: Text('Land')),
+        DropdownMenuItem(value: 'MultiFamily', child: Text('Multi-Family')),
       ],
       onChanged: (v) => ctrl.text = v ?? '',
-      validator: (v) =>
-          (v == null || v.isEmpty) ? 'Please select a property type' : null,
+      validator: (value) => v.requiredField(value, field: 'Loan Purpose'),
     );
   }
 }
@@ -127,6 +128,7 @@ class _NumberOfUnitsField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const v = FormValidators.i;
     return FormTextField(
       label: 'What is the number of units?',
       controller: ctrl,
@@ -135,13 +137,7 @@ class _NumberOfUnitsField extends StatelessWidget {
         FilteringTextInputFormatter.digitsOnly,
         LengthLimitingTextInputFormatter(2),
       ],
-      validator: (v) {
-        final t = (v ?? '').trim();
-        if (t.isEmpty) return 'Please enter number of units';
-        final n = int.tryParse(t);
-        if (n == null || n < 1 || n > 99) return 'Enter a valid number (1–99)';
-        return null;
-      },
+      validator: (value) => v.requiredField(value, field: 'Number of Units'),
     );
   }
 }
@@ -152,6 +148,7 @@ class _PropertyUsageField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const v = FormValidators.i;
     return DropDownField<String>(
       label: 'How will this property be used?',
       value: ctrl.text.isEmpty ? null : ctrl.text,
@@ -164,9 +161,7 @@ class _PropertyUsageField extends StatelessWidget {
         DropdownMenuItem(value: 'Investment', child: Text('Investment')),
       ],
       onChanged: (v) => ctrl.text = v ?? '',
-      validator: (v) => (v == null || v.isEmpty)
-          ? 'Please select how the property will be used'
-          : null,
+      validator: (value) => v.requiredField(value, field: 'Property Usage'),
     );
   }
 }
@@ -175,19 +170,9 @@ class _EstimatedDownPaymentField extends StatelessWidget {
   final TextEditingController ctrl;
   const _EstimatedDownPaymentField({required this.ctrl});
 
-  double _toAmount(String s) {
-    final t = s.replaceAll(RegExp(r'[^0-9.]'), '');
-    if (t.isEmpty) return 0;
-    return double.tryParse(t) ?? 0;
-  }
-
-  String _fmtCurrency(num v) {
-    final s = v.toStringAsFixed(0);
-    return '\$${s.replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},')}';
-  }
-
   @override
   Widget build(BuildContext context) {
+    const v = FormValidators.i;
     return FormTextField(
       label: 'What is your estimated down payment?',
       controller: ctrl,
@@ -197,8 +182,8 @@ class _EstimatedDownPaymentField extends StatelessWidget {
       ],
       onChanged: (_) {
         // only rewrite if the formatted text actually differs (avoid cursor jump loops)
-        final amt = _toAmount(ctrl.text);
-        final formatted = _fmtCurrency(amt);
+        final amt = v.toAmount(ctrl.text);
+        final formatted = v.fmtCurrency(amt);
         if (formatted != ctrl.text) {
           ctrl.value = ctrl.value.copyWith(
             text: formatted,
@@ -207,9 +192,7 @@ class _EstimatedDownPaymentField extends StatelessWidget {
           );
         }
       },
-      validator: (v) => ((v ?? '').replaceAll(RegExp(r'[^0-9]'), '').isEmpty)
-          ? 'Please enter an amount'
-          : null,
+      validator: (value) => v.requiredField(value, field: 'Estimated Down Payment'),
     );
   }
 }

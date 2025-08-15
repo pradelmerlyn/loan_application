@@ -1,51 +1,45 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'loan_registration_entity.dart';
+part of 'loan_registration_response_entity.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-LoanRegistrationEntity _$LoanRegistrationEntityFromJson(
+LoanRegistrationResponseEntity _$LoanRegistrationResponseEntityFromJson(
         Map<String, dynamic> json) =>
-    LoanRegistrationEntity(
-      loanOfficerId: json['loanOfficerId'] as String?,
+    LoanRegistrationResponseEntity(
+      borrowerBpUserId: json['borrowerBpUserId'],
       loanNumber: json['loanNumber'],
-      branchId: json['branchId'] as String?,
-      id: json['id'],
+      id: json['id'] as String?,
       borrower: json['borrower'] == null
           ? null
           : BorrowerEntity.fromJson(json['borrower'] as Map<String, dynamic>),
-      coBorrower: json['coBorrower'] == null
-          ? null
-          : BorrowerEntity.fromJson(json['coBorrower'] as Map<String, dynamic>),
       assets: (json['assets'] as List<dynamic>?)
               ?.map((e) => AssetEntity.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
-      loanPurpose: json['loanPurpose'] as String?,
+      loanPurpose: json['loanPurpose'],
       subjectPropertyFoundIndicator:
           json['subjectPropertyFoundIndicator'] as bool?,
       subjectProperty: json['subjectProperty'] == null
           ? null
           : PropertyEntity.fromJson(
               json['subjectProperty'] as Map<String, dynamic>),
-      loanAmount: json['loanAmount'] as num?,
+      loanAmount: json['loanAmount'],
       refinanceCashOutDeterminationType:
           json['refinanceCashOutDeterminationType'] as String?,
       desiredCashOut: (json['desiredCashOut'] as num?)?.toDouble(),
       refinanceYourPrimaryHome: json['refinanceYourPrimaryHome'] as bool?,
     );
 
-Map<String, dynamic> _$LoanRegistrationEntityToJson(
-    LoanRegistrationEntity instance) {
+Map<String, dynamic> _$LoanRegistrationResponseEntityToJson(
+    LoanRegistrationResponseEntity instance) {
   final val = <String, dynamic>{
-    'loanOfficerId': instance.loanOfficerId,
+    'borrowerBpUserId': instance.borrowerBpUserId,
     'loanNumber': instance.loanNumber,
-    'branchId': instance.branchId,
     'id': instance.id,
     'borrower': instance.borrower,
-    'coBorrower': instance.coBorrower,
     'assets': instance.assets,
     'loanPurpose': instance.loanPurpose,
     'subjectPropertyFoundIndicator': instance.subjectPropertyFoundIndicator,

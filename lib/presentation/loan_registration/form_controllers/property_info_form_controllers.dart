@@ -22,8 +22,6 @@ class PropertyInfoFormControllers {
   final TextEditingController propStateCtrl;
   final TextEditingController propZipCodeCtrl;
 
-  
-
   PropertyInfoFormControllers({
     required this.propertyInfoKey,
     required this.loanPurpose,

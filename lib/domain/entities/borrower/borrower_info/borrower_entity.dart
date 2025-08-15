@@ -5,7 +5,7 @@ import 'package:loan/domain/entities/borrower/borrower_hmda/borrower_hmda_ethnic
 import 'package:loan/domain/entities/borrower/borrower_hmda/borrower_hmda_gender_details_entity.dart';
 import 'package:loan/domain/entities/borrower/borrower_hmda/borrower_hmda_race_details_entity.dart';
 import 'package:loan/domain/entities/borrower/borrower_info/borrower_current_address_entity.dart';
-import 'package:loan/domain/entities/borrower/borrower_info/borrower_phone_number_entity.dart';
+import 'package:loan/domain/entities/borrower/borrower_info/borrower_home_phone_number_entity.dart';
 import 'package:loan/domain/entities/borrower/borrower_info/borrower_mailing_address_entity.dart';
 import 'package:loan/domain/entities/borrower/borrower_info/borrower_previous_addresses_entity.dart';
 import 'package:loan/domain/entities/borrower/borrower_bankruptcy/borrower_bankruptcy_entity.dart';
@@ -40,82 +40,82 @@ class BorrowerEntity extends Equatable {
   final String? emailAddress;
 
   @JsonKey(name: 'phoneNumbers')
-  final List<BorrowerPhoneNumberEntity>? phoneNumbers;
+  final List<BorrowerHomePhoneNumberEntity>? phoneNumbers;
 
-  @JsonKey(name: 'maritalStatus')
-  final String? maritalStatus;
+  @JsonKey(name: 'maritalStatus', defaultValue: 'Married')
+  final dynamic maritalStatus;
 
   @JsonKey(name: 'dependentAges')
-  final List<int>? dependentAges;
+  final List<dynamic>? dependentAges;
 
   @JsonKey(name: 'spouseIsCoBorrowerIndicator')
-  final bool? spouseIsCoBorrowerIndicator;
+  final dynamic spouseIsCoBorrowerIndicator;
 
   @JsonKey(name: 'spouseEligibleForVABenefits')
-  final bool? spouseEligibleForVABenefits;
+  final dynamic spouseEligibleForVABenefits;
 
   @JsonKey(name: 'militaryServiceExpectedCompletionDate')
-  final DateTime? militaryServiceExpectedCompletionDate;
+  final dynamic militaryServiceExpectedCompletionDate;
 
-  @JsonKey(name: 'militaryServiceType')
-  final String? militaryServiceType;
+  @JsonKey(name: 'militaryStatusType')
+  final dynamic militaryStatusType;
 
   @JsonKey(name: 'currentAddress')
   final BorrowerCurrentAddressEntity? currentAddress;
 
   @JsonKey(name: 'addresses')
-  final List<BorrowerPreviousAddressesEntity>? prevAddresses;
+  final List<BorrowerPreviousAddressesEntity>? addresses;
 
-  @JsonKey(name: 'isMailingAddressSameAsCurrent')
-  final bool? isMailingAddressSameAsCurrent;
+  @JsonKey(name: 'isMailingAddressSameAsCurrent', defaultValue: false)
+  final dynamic isMailingAddressSameAsCurrent;
 
   @JsonKey(name: 'mailingAddress')
   final BorrowerMailingAddressEntity? mailingAddress;
 
-  @JsonKey(name: 'incomes')
+  @JsonKey(name: 'incomes', defaultValue: [])
   final List<BorrowerIncomeEntity>? incomes;
 
   @JsonKey(name: 'intentToOccupy')
-  final bool? intentToOccupy;
+  final dynamic intentToOccupy;
 
   @JsonKey(name: 'homeownerPastThreeYears')
-  final bool? homeownerPastThreeYears;
+  final dynamic homeownerPastThreeYears;
 
   @JsonKey(name: 'priorPropertyUsageType')
-  final String? priorPropertyUsageType;
+  final dynamic priorPropertyUsageType;
 
   @JsonKey(name: 'priorPropertyTitleType')
-  final String? priorPropertyTitleType;
+  final dynamic priorPropertyTitleType;
 
   @JsonKey(name: 'specialBorrowerSellerRelationshipIndicator')
-  final bool? specialBorrowerSellerRelationshipIndicator;
+  final dynamic specialBorrowerSellerRelationshipIndicator;
 
   @JsonKey(name: 'undisclosedBorrowedFundsIndicator')
-  final bool? undisclosedBorrowedFundsIndicator;
+  final dynamic undisclosedBorrowedFundsIndicator;
 
   @JsonKey(name: 'undisclosedBorrowedFundsAmount')
   final num? undisclosedBorrowedFundsAmount;
 
   @JsonKey(name: 'undisclosedMortgageApplicationIndicator')
-  final bool? undisclosedMortgageApplicationIndicator;
+  final dynamic undisclosedMortgageApplicationIndicator;
 
   @JsonKey(name: 'undisclosedCreditApplicationIndicator')
-  final bool? undisclosedCreditApplicationIndicator;
+  final dynamic undisclosedCreditApplicationIndicator;
 
   @JsonKey(name: 'propertySubjectToPriorityLienIndicator')
-  final bool? propertySubjectToPriorityLienIndicator;
+  final dynamic propertySubjectToPriorityLienIndicator;
 
   @JsonKey(name: 'undisclosedComakerOfNoteIndicator')
-  final bool? undisclosedComakerOfNoteIndicator;
+  final dynamic undisclosedComakerOfNoteIndicator;
 
   @JsonKey(name: 'outstandingJudgmentsIndicator')
-  final bool? outstandingJudgmentsIndicator;
+  final dynamic outstandingJudgmentsIndicator;
 
   @JsonKey(name: 'partyToLawsuitIndicator')
-  final bool? partyToLawsuitIndicator;
+  final dynamic partyToLawsuitIndicator;
 
   @JsonKey(name: 'presentlyDelinquentIndicator')
-  final bool? presentlyDelinquentIndicator;
+  final dynamic presentlyDelinquentIndicator;
 
   @JsonKey(name: 'priorPropertyDeedInLieuConveyedIndicator')
   final bool? priorPropertyDeedInLieuConveyedIndicator;
@@ -174,9 +174,9 @@ class BorrowerEntity extends Equatable {
     this.spouseIsCoBorrowerIndicator,
     this.spouseEligibleForVABenefits,
     this.militaryServiceExpectedCompletionDate,
-    this.militaryServiceType,
+    this.militaryStatusType,
     this.currentAddress,
-    this.prevAddresses,
+    this.addresses,
     this.isMailingAddressSameAsCurrent,
     this.mailingAddress,
     this.incomes,
@@ -226,9 +226,9 @@ class BorrowerEntity extends Equatable {
         spouseIsCoBorrowerIndicator,
         spouseEligibleForVABenefits,
         militaryServiceExpectedCompletionDate,
-        militaryServiceType,
+        militaryStatusType,
         currentAddress,
-        prevAddresses,
+        addresses,
         isMailingAddressSameAsCurrent,
         mailingAddress,
         incomes,

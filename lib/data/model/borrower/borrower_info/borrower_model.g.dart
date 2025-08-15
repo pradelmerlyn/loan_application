@@ -18,43 +18,36 @@ BorrowerModel _$BorrowerModelFromJson(Map<String, dynamic> json) =>
           : DateTime.parse(json['dateOfBirth'] as String),
       taxIdentifier: json['taxIdentifier'] as String?,
       emailAddress: json['emailAddress'] as String?,
-      maritalStatus: json['maritalStatus'] as String?,
-      dependentAges: (json['dependentAges'] as List<dynamic>?)
-          ?.map((e) => (e as num).toInt())
-          .toList(),
-      spouseIsCoBorrowerIndicator: json['spouseIsCoBorrowerIndicator'] as bool?,
-      spouseEligibleForVABenefits: json['spouseEligibleForVABenefits'] as bool?,
+      maritalStatus: json['maritalStatus'] ?? 'Married',
+      dependentAges: json['dependentAges'] as List<dynamic>?,
+      spouseIsCoBorrowerIndicator: json['spouseIsCoBorrowerIndicator'],
+      spouseEligibleForVABenefits: json['spouseEligibleForVABenefits'],
       militaryServiceExpectedCompletionDate:
-          json['militaryServiceExpectedCompletionDate'] == null
-              ? null
-              : DateTime.parse(
-                  json['militaryServiceExpectedCompletionDate'] as String),
-      militaryServiceType: json['militaryServiceType'] as String?,
+          json['militaryServiceExpectedCompletionDate'],
+      militaryStatusType: json['militaryStatusType'],
       isMailingAddressSameAsCurrent:
-          json['isMailingAddressSameAsCurrent'] as bool?,
-      intentToOccupy: json['intentToOccupy'] as bool?,
-      homeownerPastThreeYears: json['homeownerPastThreeYears'] as bool?,
-      priorPropertyUsageType: json['priorPropertyUsageType'] as String?,
-      priorPropertyTitleType: json['priorPropertyTitleType'] as String?,
+          json['isMailingAddressSameAsCurrent'] ?? false,
+      intentToOccupy: json['intentToOccupy'],
+      homeownerPastThreeYears: json['homeownerPastThreeYears'],
+      priorPropertyUsageType: json['priorPropertyUsageType'],
+      priorPropertyTitleType: json['priorPropertyTitleType'],
       specialBorrowerSellerRelationshipIndicator:
-          json['specialBorrowerSellerRelationshipIndicator'] as bool?,
+          json['specialBorrowerSellerRelationshipIndicator'],
       undisclosedBorrowedFundsIndicator:
-          json['undisclosedBorrowedFundsIndicator'] as bool?,
+          json['undisclosedBorrowedFundsIndicator'],
       undisclosedBorrowedFundsAmount:
           json['undisclosedBorrowedFundsAmount'] as num?,
       undisclosedMortgageApplicationIndicator:
-          json['undisclosedMortgageApplicationIndicator'] as bool?,
+          json['undisclosedMortgageApplicationIndicator'],
       undisclosedCreditApplicationIndicator:
-          json['undisclosedCreditApplicationIndicator'] as bool?,
+          json['undisclosedCreditApplicationIndicator'],
       propertySubjectToPriorityLienIndicator:
-          json['propertySubjectToPriorityLienIndicator'] as bool?,
+          json['propertySubjectToPriorityLienIndicator'],
       undisclosedComakerOfNoteIndicator:
-          json['undisclosedComakerOfNoteIndicator'] as bool?,
-      outstandingJudgmentsIndicator:
-          json['outstandingJudgmentsIndicator'] as bool?,
-      partyToLawsuitIndicator: json['partyToLawsuitIndicator'] as bool?,
-      presentlyDelinquentIndicator:
-          json['presentlyDelinquentIndicator'] as bool?,
+          json['undisclosedComakerOfNoteIndicator'],
+      outstandingJudgmentsIndicator: json['outstandingJudgmentsIndicator'],
+      partyToLawsuitIndicator: json['partyToLawsuitIndicator'],
+      presentlyDelinquentIndicator: json['presentlyDelinquentIndicator'],
       priorPropertyDeedInLieuConveyedIndicator:
           json['priorPropertyDeedInLieuConveyedIndicator'] as bool?,
       deedInLieuLatestCompletionDate: json['deedInLieuLatestCompletionDate'] ==
@@ -81,38 +74,40 @@ BorrowerModel _$BorrowerModelFromJson(Map<String, dynamic> json) =>
       livedMoreThanTwoYears: json['livedMoreThanTwoYears'] as bool?,
       phoneNumbers: (json['phoneNumbers'] as List<dynamic>?)
           ?.map((e) =>
-              BorrowerPhoneNumberModel.fromJson(e as Map<String, dynamic>))
+              BorrowerHomePhoneNumberEntity.fromJson(e as Map<String, dynamic>))
           .toList(),
       currentAddress: json['currentAddress'] == null
           ? null
-          : BorrowerCurrentAddressModel.fromJson(
+          : BorrowerCurrentAddressEntity.fromJson(
               json['currentAddress'] as Map<String, dynamic>),
-      prevAddresses: (json['addresses'] as List<dynamic>?)
-          ?.map((e) => BorrowerPreviousAddressesModel.fromJson(
+      addresses: (json['addresses'] as List<dynamic>?)
+          ?.map((e) => BorrowerPreviousAddressesEntity.fromJson(
               e as Map<String, dynamic>))
           .toList(),
       mailingAddress: json['mailingAddress'] == null
           ? null
-          : BorrowerMailingAddressModel.fromJson(
+          : BorrowerMailingAddressEntity.fromJson(
               json['mailingAddress'] as Map<String, dynamic>),
       incomes: (json['incomes'] as List<dynamic>?)
-          ?.map((e) => BorrowerIncomeModel.fromJson(e as Map<String, dynamic>))
-          .toList(),
+              ?.map((e) =>
+                  BorrowerIncomeEntity.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
       bankruptcies: (json['bankruptcies'] as List<dynamic>?)
           ?.map((e) =>
-              BorrowerBankruptcyModel.fromJson(e as Map<String, dynamic>))
+              BorrowerBankruptcyEntity.fromJson(e as Map<String, dynamic>))
           .toList(),
       hmdaGenderDetails: json['hmdaGenderDetails'] == null
           ? null
-          : BorrowerHmdaGenderDetailsModel.fromJson(
+          : BorrowerHmdaGenderDetailsEntity.fromJson(
               json['hmdaGenderDetails'] as Map<String, dynamic>),
       hmdaEthnicityDetails: json['hmdaEthnicityDetails'] == null
           ? null
-          : BorrowerHmdaEthnicityDetailsModel.fromJson(
+          : BorrowerHmdaEthnicityDetailsEntity.fromJson(
               json['hmdaEthnicityDetails'] as Map<String, dynamic>),
       hmdaRaceDetails: json['hmdaRaceDetails'] == null
           ? null
-          : BorrowerHmdaRaceDetailsModel.fromJson(
+          : BorrowerHmdaRaceDetailsEntity.fromJson(
               json['hmdaRaceDetails'] as Map<String, dynamic>),
     );
 
@@ -132,10 +127,10 @@ Map<String, dynamic> _$BorrowerModelToJson(BorrowerModel instance) =>
       'spouseIsCoBorrowerIndicator': instance.spouseIsCoBorrowerIndicator,
       'spouseEligibleForVABenefits': instance.spouseEligibleForVABenefits,
       'militaryServiceExpectedCompletionDate':
-          instance.militaryServiceExpectedCompletionDate?.toIso8601String(),
-      'militaryServiceType': instance.militaryServiceType,
+          instance.militaryServiceExpectedCompletionDate,
+      'militaryStatusType': instance.militaryStatusType,
       'currentAddress': instance.currentAddress?.toJson(),
-      'addresses': instance.prevAddresses?.map((e) => e.toJson()).toList(),
+      'addresses': instance.addresses?.map((e) => e.toJson()).toList(),
       'isMailingAddressSameAsCurrent': instance.isMailingAddressSameAsCurrent,
       'mailingAddress': instance.mailingAddress?.toJson(),
       'incomes': instance.incomes?.map((e) => e.toJson()).toList(),

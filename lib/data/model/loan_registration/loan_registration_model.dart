@@ -1,9 +1,9 @@
 // loan_registration_model.dart
 import 'package:json_annotation/json_annotation.dart';
-import 'package:loan/data/model/borrower/borrower_info/borrower_model.dart';
-import 'package:loan/data/model/financial_assets/asset_model.dart';
-import 'package:loan/data/model/property/property_model.dart';
+import 'package:loan/domain/entities/borrower/borrower_info/borrower_entity.dart';
+import 'package:loan/domain/entities/financial_assets/asset_entity.dart';
 import 'package:loan/domain/entities/loan_registration/loan_registration_entity.dart';
+import 'package:loan/domain/entities/property/property_entity.dart';
 
 part 'loan_registration_model.g.dart';
 
@@ -13,12 +13,12 @@ class LoanRegistrationModel extends LoanRegistrationEntity {
     super.loanOfficerId,
     super.branchId,
     super.id,
-    BorrowerModel? super.borrower,
-    BorrowerModel? super.coBorrower,
-    List<AssetModel>? super.assets,
+    super.borrower,
+    super.coBorrower,
+    super.assets,
     super.loanPurpose,
     super.subjectPropertyFoundIndicator,
-    PropertyModel? super.subjectProperty,
+    super.subjectProperty,
     super.loanAmount,
     super.refinanceCashOutDeterminationType,
     super.desiredCashOut,

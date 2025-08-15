@@ -36,9 +36,9 @@ bool _asBool(TextEditingController c) {
   return t == 'true' || t == 'yes' || t == '1';
 }
 
-void _setBool(TextEditingController c, bool v) {
-  c.text = v ? 'true' : 'false';
-}
+// void _setBool(TextEditingController c, bool v) {
+//   c.text = v ? 'true' : 'false';
+// }
 
 /* ================= ethnicity ================= */
 
