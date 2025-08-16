@@ -20,6 +20,9 @@ class LoanRegistrationEntity extends Equatable {
   @JsonKey(name: 'id')
   final dynamic id;
 
+    @JsonKey(name: 'applicationId')
+  final dynamic applicationId;
+
   @JsonKey(name: 'borrower')
   final BorrowerEntity? borrower;
 
@@ -53,6 +56,7 @@ class LoanRegistrationEntity extends Equatable {
   const LoanRegistrationEntity({
     this.loanOfficerId,
     this.loanNumber,
+    this.applicationId,
     this.branchId,
     this.id,
     this.borrower,
@@ -70,6 +74,7 @@ class LoanRegistrationEntity extends Equatable {
   @override
   List<Object?> get props => [
         loanOfficerId,
+        applicationId,
         branchId,
         id,
         borrower,

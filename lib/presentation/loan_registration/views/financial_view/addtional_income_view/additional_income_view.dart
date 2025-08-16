@@ -82,33 +82,34 @@ class _AdditionalIncomeSectionState extends State<AdditionalIncomeSection> {
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
             child: ButtonOutlined(
-              label: 'Add Another Income',
-              leading: const Icon(
-                Icons.add_circle_outline,
-                size: 20,
-                color: Colors.white,
-              ),
-              backgroundColor: theme.colorScheme.secondary,
-              foregroundColor: Colors.white,
-              onPressed: () async {
-                final result = await Navigator.push<Map<String, String>>(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const AdditionalIncomeScreen(),
-                  ),
-                );
-                if (!mounted || result == null) return;
-                setState(() {
-                  _items.add(
-                    AdditionalIncomeItem(
-                      source: result['source'] ?? '',
-                      owner: result['owner'] ?? '',
-                      amount: result['amount'] ?? r'$0.00',
-                    ),
-                  );
-                });
-              },
-            ),
+                label: 'Add Another Income',
+                leading: const Icon(
+                  Icons.add_circle_outline,
+                  size: 20,
+                  color: Colors.white,
+                ),
+                backgroundColor: theme.colorScheme.secondary,
+                foregroundColor: Colors.white,
+                onPressed: () {},
+                //async {
+                //   final result = await Navigator.push<Map<String, String>>(
+                //     context,
+                //     MaterialPageRoute(
+                //       builder: (_) => const AdditionalIncomeScreen(),
+                //     ),
+                //   );
+                //   if (!mounted || result == null) return;
+                //   setState(() {
+                //     _items.add(
+                //       AdditionalIncomeItem(
+                //         source: result['source'] ?? '',
+                //         owner: result['owner'] ?? '',
+                //         amount: result['amount'] ?? r'$0.00',
+                //       ),
+                //     );
+                //   });
+                // },
+                ),
           ),
         ],
       ),

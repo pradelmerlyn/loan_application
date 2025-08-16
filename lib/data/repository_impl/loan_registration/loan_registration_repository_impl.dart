@@ -154,8 +154,7 @@ class LoanRegistrationRepositoryImpl implements LoanRegistrationRepository {
         ),
       );
     } on CheckedFromJsonException catch (e, st) {
-      debugPrint(
-          '❌ JSON type error in ${e.className} at key "${e.key}": ${e.message}');
+      //debugPrint(  '❌ JSON type error in ${e.className} at key "${e.key}": ${e.message}');
       debugPrintStack(stackTrace: st);
       return DataFailed(
         DioException(

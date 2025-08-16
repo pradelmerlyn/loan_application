@@ -12,8 +12,15 @@ class AssetsSection extends StatefulWidget {
 }
 
 class _AssetsSectionState extends State<AssetsSection> {
-  final List<AssetEntity> _assets = <AssetEntity>[
-    const AssetEntity(), // empty starter item (optional)
+  final List<AssetEntity> _assets = [
+    const AssetEntity(
+      institutionName: 'UnionBank',
+      assetType: 'Savings Account',
+      accountIdentifier: '123456789012',
+      borrowersIds: ['John Doe'],
+      userType: 'Primary',
+      assetValue: 10000.00,
+    ),
   ];
 
   Future<void> _handleAddAsset() async {
@@ -246,7 +253,7 @@ class _AddAssetButton extends StatelessWidget {
         size: 20,
         color: Colors.white,
       ),
-      onPressed: onPressed,
+      onPressed: () {},
       backgroundColor: theme.colorScheme.secondary,
       foregroundColor: Colors.white,
     );

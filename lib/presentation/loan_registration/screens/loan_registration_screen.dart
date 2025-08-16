@@ -29,6 +29,7 @@ import 'package:loan/presentation/loan_registration/views/property_view/property
 import 'package:loan/presentation/loan_registration/views/financial_view/financial_view.dart';
 import 'package:loan/presentation/loan_registration/views/declaration_view/declaration_view.dart';
 import 'package:loan/presentation/loan_registration/views/demographics_view/demographic_view.dart';
+import 'package:loan/presentation/login/screens/login_screen.dart';
 
 // UI
 import 'package:loan/presentation/widgets/ui/button_outlined.dart';
@@ -59,7 +60,9 @@ class _LoanRegistrationScreenState extends State<LoanRegistrationScreen>
   final declarationFormKey = GlobalKey<FormState>();
   final demographicFormKey = GlobalKey<FormState>();
 
-  bool _loadingShown = false; // tracks the loading dialog visibility
+  bool _loadingShown = false;
+  bool _hasSubmittedFinalStep = false;
+  bool _successDialogShown = false;
 
   @override
   void initState() {
@@ -77,7 +80,6 @@ class _LoanRegistrationScreenState extends State<LoanRegistrationScreen>
 
   @override
   void dispose() {
-    // close loading dialog if still open
     if (_loadingShown && mounted) {
       Navigator.of(context, rootNavigator: true).pop();
       _loadingShown = false;
@@ -116,20 +118,17 @@ class _LoanRegistrationScreenState extends State<LoanRegistrationScreen>
       create: (_) => sl<LoanRegistrationBloc>()..add(const InitSteps(total: 5)),
       child: BlocListener<LoanRegistrationBloc, LoanRegistrationState>(
         listener: (context, state) {
-          // show/hide loading dialog
           if (state.status == LoanRegStatus.loading) {
             _showLoading(message: 'Submitting…');
           } else {
             _hideLoading();
           }
 
-          // keep tabs synced
           final target = (state.currentStep - 1).clamp(0, 4);
           if (_tabs.index != target) _tabs.animateTo(target);
 
           if (kDebugMode) debugPrint('Step -> ${state.currentStep}');
 
-          // errors
           final err = state.error ?? '';
           if (state.status == LoanRegStatus.failure && err.isNotEmpty) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -137,7 +136,40 @@ class _LoanRegistrationScreenState extends State<LoanRegistrationScreen>
             );
           }
 
-          // advance after borrower submit success
+          if (!_successDialogShown &&
+              _hasSubmittedFinalStep &&
+              state.status == LoanRegStatus.success &&
+              state.currentStep == state.total &&
+              state.otc != null) {
+            _successDialogShown = true;
+
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (!context.mounted) return;
+              showDialog<void>(
+                context: context,
+                barrierDismissible: false,
+                builder: (_) => AlertDialog(
+                  title: const Text('Success'),
+                  content: Text(
+                      'Your loan application has been submitted successfully.\n\nOTC: ${state.otc}'),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context, rootNavigator: true).pop();
+                        Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(
+                              builder: (_) => const LoginScreen()),
+                          (route) => false,
+                        );
+                      },
+                      child: const Text('OK'),
+                    ),
+                  ],
+                ),
+              );
+            });
+          }
+
           if (state.status == LoanRegStatus.success && state.currentStep == 1) {
             context.read<LoanRegistrationBloc>().add(const NextStepsEvent());
           }
@@ -223,6 +255,7 @@ class _LoanRegistrationScreenState extends State<LoanRegistrationScreen>
                 financialCtrl: financialCtrl,
                 declarationCtrls: declarationCtrls,
                 demographicsCtrls: demographicsCtrls,
+                onFinalSubmit: () => _hasSubmittedFinalStep = true,
               ),
             );
           },
@@ -249,6 +282,8 @@ class _BottomNavBar extends StatelessWidget {
   final DeclarationInfoFormControllers declarationCtrls;
   final DemographicsFormControllers demographicsCtrls;
 
+  final VoidCallback? onFinalSubmit;
+
   const _BottomNavBar({
     required this.isFirst,
     required this.nextLabel,
@@ -263,6 +298,7 @@ class _BottomNavBar extends StatelessWidget {
     required this.financialCtrl,
     required this.declarationCtrls,
     required this.demographicsCtrls,
+    this.onFinalSubmit,
   });
 
   @override
@@ -343,17 +379,15 @@ class _BottomNavBar extends StatelessWidget {
                           borrowerFormKey.currentState?.save();
                           final borrower = buildBorrowerFromForm(
                               borrowerCtrls, propertyCtrls);
-                          if (kDebugMode) {
-                            // debugPrint('[UI] Submitting borrower: ${borrower.toJson()}');
-                          }
                           context
                               .read<LoanRegistrationBloc>()
                               .add(SubmitBorrowerInfo(borrower: borrower));
                           return;
                         }
 
-                        // FINAL LOAN SUBMISSION
                         if (isLast) {
+                          onFinalSubmit?.call();
+
                           final state =
                               context.read<LoanRegistrationBloc>().state;
 
@@ -362,24 +396,19 @@ class _BottomNavBar extends StatelessWidget {
                             borrowerCtrls: borrowerCtrls,
                             propertyCtrls: propertyCtrls,
                             financialCtrl: financialCtrl,
-                            loanNumber: state.loanNumber, 
-                            borrowerId: state.borrowerId, 
+                            loanNumber: state.loanNumber,
+                            borrowerId: state.borrowerId,
                           );
-                          if (kDebugMode) {
-                           //  debugPrint('[UI] Final submit payload: ${payload.toJson()}');
-                          }
                           context
                               .read<LoanRegistrationBloc>()
                               .add(SubmitLoanRegistration(payload: payload));
                           return;
                         }
 
-                        // otherwise go next
                         bloc.add(const NextStepsEvent());
                       },
                 backgroundColor: theme.colorScheme.secondary,
                 foregroundColor: Colors.white,
-                // no trailing spinner; the modal dialog handles loading UI
               ),
             ),
           ],

@@ -11,16 +11,17 @@ LoanRegistrationEntity buildLoanRegistrationEntityFromControllers({
   required PropertyInfoFormControllers propertyCtrls,
   required AssetFormControllers financialCtrl,
 
-  /// IDs captured from the first API response (Bloc/state should supply these)
-  int? loanNumber, // <- GUID (maps to LoanRegistrationEntity.id)
-  String? borrowerId, // <- GUID (maps to BorrowerEntity.id)
+  
+  int? id,
+  int? loanNumber, 
+  String? borrowerId,
 }) {
   // Build the borrower from the form
   final borrowerFromForm = buildBorrowerFromForm(borrowerCtrls);
 
   // Rebuild borrower with injected ID 
   final borrowerWithId = BorrowerEntity(
-    id: borrowerId, // <---- inject here
+    id: borrowerId,
     firstName: borrowerFromForm.firstName,
     middleName: borrowerFromForm.middleName,
     lastName: borrowerFromForm.lastName,
@@ -88,12 +89,13 @@ LoanRegistrationEntity buildLoanRegistrationEntityFromControllers({
   );
 
   return LoanRegistrationEntity(
-    loanNumber: loanNumber, // <---- use applicationId (GUID) here, NOT loanNumber
+    applicationId: id, 
+    id: id, 
+    loanNumber: loanNumber,
     loanOfficerId: 'mmaine',
     loanPurpose: 'Purchase',
     loanAmount: 0,
     borrower: borrowerWithId,
     subjectPropertyFoundIndicator: true,
-    // add other fields from propertyCtrls / financialCtrl if needed
   );
 }

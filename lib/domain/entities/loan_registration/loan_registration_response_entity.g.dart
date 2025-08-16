@@ -12,6 +12,7 @@ LoanRegistrationResponseEntity _$LoanRegistrationResponseEntityFromJson(
       borrowerBpUserId: json['borrowerBpUserId'],
       loanNumber: json['loanNumber'],
       id: json['id'] as String?,
+      applicationId: json['applicationId'] as String?,
       borrower: json['borrower'] == null
           ? null
           : BorrowerEntity.fromJson(json['borrower'] as Map<String, dynamic>),
@@ -31,6 +32,7 @@ LoanRegistrationResponseEntity _$LoanRegistrationResponseEntityFromJson(
           json['refinanceCashOutDeterminationType'] as String?,
       desiredCashOut: (json['desiredCashOut'] as num?)?.toDouble(),
       refinanceYourPrimaryHome: json['refinanceYourPrimaryHome'] as bool?,
+      otc: json['otc'] as String?,
     );
 
 Map<String, dynamic> _$LoanRegistrationResponseEntityToJson(
@@ -39,6 +41,7 @@ Map<String, dynamic> _$LoanRegistrationResponseEntityToJson(
     'borrowerBpUserId': instance.borrowerBpUserId,
     'loanNumber': instance.loanNumber,
     'id': instance.id,
+    'applicationId': instance.applicationId,
     'borrower': instance.borrower,
     'assets': instance.assets,
     'loanPurpose': instance.loanPurpose,
@@ -57,5 +60,6 @@ Map<String, dynamic> _$LoanRegistrationResponseEntityToJson(
       instance.refinanceCashOutDeterminationType;
   val['desiredCashOut'] = instance.desiredCashOut;
   val['refinanceYourPrimaryHome'] = instance.refinanceYourPrimaryHome;
+  val['otc'] = instance.otc;
   return val;
 }

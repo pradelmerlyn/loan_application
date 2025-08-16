@@ -19,13 +19,15 @@ class LoanRegistrationState extends Equatable {
 
   // holders for application response in step 1
   final String? loanId;
+  final String? applicationId;
   final int? loanNumber;
   final String? borrowerId;
 
   final LoanRegStatus status;
   final String? error;
 
-  final LoanRegistrationEntity? registration; //result
+  final LoanRegistrationEntity? registration;
+  final String? otc;
 
   final BorrowerEntity borrower;
   final BorrowerEntity? coBorrower;
@@ -58,6 +60,8 @@ class LoanRegistrationState extends Equatable {
 
     // result
     this.registration,
+    this.applicationId,
+    this.otc = "",
 
     // data
     this.borrower = const BorrowerEntity(),
@@ -78,6 +82,7 @@ class LoanRegistrationState extends Equatable {
 
   LoanRegistrationEntity get payload => LoanRegistrationEntity(
         loanOfficerId: 'mmaine',
+        applicationId: loanId,
         loanNumber: loanNumber,
         borrower: borrower,
         coBorrower: coBorrower,
@@ -109,8 +114,10 @@ class LoanRegistrationState extends Equatable {
     LoanRegistrationEntity? registration,
     bool clearRegistration = false,
     String? loanId,
+    String? applicationId,
     int? loanNumber,
     String? borrowerId,
+    String? otc,
 
     // data
     BorrowerEntity? borrower,
@@ -143,6 +150,8 @@ class LoanRegistrationState extends Equatable {
       loanId: loanId ?? this.loanId,
       loanNumber: loanNumber ?? this.loanNumber,
       borrowerId: borrowerId ?? this.borrowerId,
+      otc: otc ?? this.otc,
+      applicationId: applicationId ?? this.applicationId,
 
       // data
       borrower: borrower ?? this.borrower,
@@ -178,8 +187,10 @@ class LoanRegistrationState extends Equatable {
         // result
         registration,
         loanId,
+        applicationId,
         loanNumber,
         borrowerId,
+        otc,
 
         // data
         borrower,
