@@ -60,7 +60,7 @@ class FormValidators {
   /* ===================== Validators ===================== */
 
   String? requiredField(String? value, {required String field}) {
-   // if ((value ?? '').trim().isEmpty) return '$field is required';
+    if ((value ?? '').trim().isEmpty) return '$field is required';
     return null;
   }
 

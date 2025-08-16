@@ -11,9 +11,6 @@ import 'package:loan/domain/entities/borrower/borrower_info/borrower_entity.dart
 import 'package:loan/domain/entities/loan_registration/loan_registration_entity.dart';
 import 'package:loan/domain/entities/loan_registration/loan_registration_response_entity.dart';
 
-// Response validation helper (extension on entity)
-import 'package:loan/presentation/loan_registration/validators/response_validator.dart';
-
 // Single use case for both steps
 import 'package:loan/domain/use_case/loan_registration/submit_loan_use_case.dart'
     show SubmitLoanUseCase, SubmitApplicationParams;
@@ -132,12 +129,16 @@ class LoanRegistrationBloc
         emit,
         onSuccessLog: 'Borrower step response',
         onFailFallback: 'Failed to submit borrower',
-        onSuccess: (resp) async{
-          // Save identifiers from the first API
+        onSuccess: (resp) async {
+          // debugPrint('[STEP 1] Response: ${resp.toJson()}');
+          // debugPrint('[STEP 1] loanId: ${resp.id}');
+          // debugPrint('[STEP 1] borrowerId: ${resp.borrower?.id}');
+
           emit(state.copyWith(
-            loanId: resp.id, // GUID string
-            loanNumber: resp.loanNumber, // int?
-            borrowerId: resp.borrower?.id, // GUID string
+             applicationId: resp.applicationId,
+            loanId: resp.id,
+            loanNumber: resp.loanNumber,
+            borrowerId: resp.borrower?.id,
           ));
         },
       );
@@ -165,7 +166,7 @@ class LoanRegistrationBloc
 
       final orig = e.payload;
 
-      // 🔑 Manually build a new payload with injected IDs
+      // Manually build a new payload with injected IDs
       final enrichedPayload = LoanRegistrationEntity(
         id: state.loanId, // int? from step-1
         loanNumber: state.loanNumber, // int? from step-1
@@ -182,7 +183,7 @@ class LoanRegistrationBloc
         desiredCashOut: orig.desiredCashOut,
         refinanceYourPrimaryHome: orig.refinanceYourPrimaryHome,
 
-        // 🔑 inject borrower id
+        // inject borrower id
         borrower: orig.borrower == null
             ? null
             : BorrowerEntity(
@@ -267,11 +268,15 @@ class LoanRegistrationBloc
         onSuccessLog: 'Final submit response',
         onFailFallback: 'Failed to submit application',
         onSuccess: (resp) async {
+          //  debugPrint('[STEP 5] Response: ${resp.toJson()}');
+          // debugPrint('[STEP 5] loanId: ${resp.id}');
+          // debugPrint('[STEP 5] borrowerId: ${resp.borrower?.id}');
           emit(state.copyWith(
-           
+            applicationId: resp.applicationId,
             loanId: resp.id,
             loanNumber: resp.loanNumber,
             borrowerId: resp.borrower?.id,
+            otc: resp.otc,
           ));
         },
       );
@@ -285,7 +290,7 @@ class LoanRegistrationBloc
     }
   }
 
-  /// Centralized handler for DataState<LoanRegistrationResponseEntity>
+  ///  handler for DataState<LoanRegistrationResponseEntity>
   Future<void> _handleResponseOrFail(
     DataState<LoanRegistrationResponseEntity> res,
     Emitter<LoanRegistrationState> emit, {
@@ -297,11 +302,10 @@ class LoanRegistrationBloc
       final resp = res.data;
       if (kDebugMode) debugPrint('$onSuccessLog: ${resp?.toJson()}');
 
-      if (resp == null || !resp.isValid) {
+     if (resp == null) {
         emit(state.copyWith(
           status: LoanRegStatus.failure,
-          error: resp?.validationErrorMessage ??
-              '$onFailFallback (invalid response)',
+          error: onFailFallback,
         ));
         return;
       }

@@ -31,6 +31,7 @@ LoanRegistrationResponseModel _$LoanRegistrationResponseModelFromJson(
           json['refinanceCashOutDeterminationType'] as String?,
       desiredCashOut: (json['desiredCashOut'] as num?)?.toDouble(),
       refinanceYourPrimaryHome: json['refinanceYourPrimaryHome'] as bool?,
+      otc: json['otc'] as String?,
     );
 
 Map<String, dynamic> _$LoanRegistrationResponseModelToJson(
@@ -57,5 +58,6 @@ Map<String, dynamic> _$LoanRegistrationResponseModelToJson(
       instance.refinanceCashOutDeterminationType;
   val['desiredCashOut'] = instance.desiredCashOut;
   val['refinanceYourPrimaryHome'] = instance.refinanceYourPrimaryHome;
+  val['otc'] = instance.otc;
   return val;
 }

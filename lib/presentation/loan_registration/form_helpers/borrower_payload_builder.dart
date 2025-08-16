@@ -1,5 +1,4 @@
-import 'package:loan/domain/entities/borrower/borrower_bankruptcy/borrower_bankruptcy_entity.dart';
-import 'package:loan/domain/entities/borrower/borrower_income/borrower_income_entity.dart';
+
 import 'package:loan/domain/entities/borrower/borrower_info/borrower_current_address_entity.dart';
 import 'package:loan/domain/entities/borrower/borrower_info/borrower_entity.dart';
 import 'package:loan/domain/entities/borrower/borrower_info/borrower_home_phone_number_entity.dart';
@@ -95,10 +94,8 @@ BorrowerEntity buildBorrowerFromForm(
         addressValidStart: v.dateFromTextCtrl(borrCtrls.startDateCtrl),
       ),
     ],
-    // Typed empty lists to avoid List<dynamic>
-    incomes: const <BorrowerIncomeEntity>[],
-    bankruptcies: const <BorrowerBankruptcyEntity>[], // replace with correct entity if you have one
-
+    incomes: const [],
+    bankruptcies: const [], 
     // HMDA
     hmdaGenderDetails: null, // BorrowerHmdaGenderDetailsEntity?
     hmdaEthnicityDetails: null,
@@ -110,46 +107,3 @@ BorrowerEntity buildBorrowerFromForm(
   );
 }
 
-/// Build the full payload (for final SUBMIT)
-// LoanRegistrationEntity buildFullPayload({
-//   required BorrowerInfoFormControllers borrowerCtrls,
-//   required PropertyInfoFormControllers propertyCtrls,
-//   required AssetFormControllers financialCtrl,
-// }) {
-//   final borrower = buildBorrowerFromForm(borrowerCtrls);
-
-//   final subjectProperty = PropertyEntity(
-//     intendedUsageType: propertyCtrls.intendedUsageType.text.trim(),
-//     propertyType: propertyCtrls.propertyType.text.trim(),
-//     address: PropertyAddressEntity(
-//       line: propertyCtrls.propAddressLine1Ctrl.text.trim(),
-//       line2: propertyCtrls.propUnitNoCtrl.text.trim(),
-//       city: propertyCtrls.propCityCtrl.text.trim(),
-//       state: propertyCtrls.propStateCtrl.text.trim(),
-//       zipCode: propertyCtrls.propZipCodeCtrl.text.trim(),
-//       action: 'Add',
-//     ),
-//   );
-
-//   final assets = financialCtrl.rows
-//       .map(
-//         (row) => AssetEntity(
-//           assetType: row.assetTypeCtrl.text.trim(),
-//           institutionName: row.financialInstitutionNameCtrl.text.trim(),
-//           accountIdentifier: row.accountNumberCtrl.text.trim(),
-//           assetValue: double.tryParse(row.cashMarketValueCtrl.text.trim()) ?? 0,
-//           userType: 'Borrower',
-//           action: 'Add',
-//         ),
-//       )
-//       .toList();
-
-//   return LoanRegistrationEntity(
-//     loanOfficerId: 'mmaine',
-//     loanPurpose: 'Purchase',
-//     borrower: borrower,
-//     subjectPropertyFoundIndicator: true,
-//     subjectProperty: subjectProperty,
-
-//   );
-//}

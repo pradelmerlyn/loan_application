@@ -17,6 +17,9 @@ class LoanRegistrationResponseEntity extends Equatable {
   @JsonKey(name: 'id')
   final String? id;
 
+   @JsonKey(name: 'applicationId')
+  final String? applicationId;
+
   @JsonKey(name: 'borrower')
   final BorrowerEntity? borrower;
 
@@ -44,10 +47,14 @@ class LoanRegistrationResponseEntity extends Equatable {
   @JsonKey(name: 'refinanceYourPrimaryHome')
   final bool? refinanceYourPrimaryHome;
 
+  @JsonKey(name: 'otc')
+  final String? otc;
+
   const LoanRegistrationResponseEntity({
     this.borrowerBpUserId,
     this.loanNumber,
     this.id,
+    this.applicationId,
     this.borrower,
     this.assets,
     this.loanPurpose,
@@ -57,6 +64,7 @@ class LoanRegistrationResponseEntity extends Equatable {
     this.refinanceCashOutDeterminationType,
     this.desiredCashOut,
     this.refinanceYourPrimaryHome,
+    this.otc,
   });
 
   factory LoanRegistrationResponseEntity.fromJson(Map<String, dynamic> json) =>
@@ -68,6 +76,7 @@ class LoanRegistrationResponseEntity extends Equatable {
   List<Object?> get props => [
         borrowerBpUserId,
         loanNumber,
+        applicationId,
         id,
         borrower,
         assets,
@@ -78,5 +87,6 @@ class LoanRegistrationResponseEntity extends Equatable {
         refinanceCashOutDeterminationType,
         desiredCashOut,
         refinanceYourPrimaryHome,
+        otc,
       ];
 }

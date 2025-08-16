@@ -117,8 +117,8 @@ class _MailUnitAndCityRow extends StatelessWidget {
               label: 'Apt/Unit/Suite',
               controller: unitCtrl,
               readOnly: readOnly,
-              validator: (value) =>
-                  borrValidator.requiredField(value, field: 'Apt/Unit/Suite'),
+              //validator: (value) =>
+                //  borrValidator.requiredField(value, field: 'Apt/Unit/Suite'),
             ),
           ),
           const SizedBox(width: 12),

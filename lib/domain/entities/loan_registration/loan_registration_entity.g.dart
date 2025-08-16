@@ -11,6 +11,7 @@ LoanRegistrationEntity _$LoanRegistrationEntityFromJson(
     LoanRegistrationEntity(
       loanOfficerId: json['loanOfficerId'] as String?,
       loanNumber: json['loanNumber'],
+      applicationId: json['applicationId'],
       branchId: json['branchId'] as String?,
       id: json['id'],
       borrower: json['borrower'] == null
@@ -44,6 +45,7 @@ Map<String, dynamic> _$LoanRegistrationEntityToJson(
     'loanNumber': instance.loanNumber,
     'branchId': instance.branchId,
     'id': instance.id,
+    'applicationId': instance.applicationId,
     'borrower': instance.borrower,
     'coBorrower': instance.coBorrower,
     'assets': instance.assets,

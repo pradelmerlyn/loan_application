@@ -22,6 +22,7 @@ class LoanRegistrationResponseModel extends LoanRegistrationResponseEntity {
     super.refinanceCashOutDeterminationType,
     super.desiredCashOut,
     super.refinanceYourPrimaryHome,
+    super.otc,
   });
 
   factory LoanRegistrationResponseModel.fromJson(Map<String, dynamic> json) =>

@@ -209,7 +209,7 @@ class _AddEmploymentButton extends StatelessWidget {
           size: 20,
           color: Colors.white,
         ),
-        onPressed: onAdd,
+        onPressed: () {},
         backgroundColor: theme.colorScheme.secondary,
         foregroundColor: Colors.white,
       ),
