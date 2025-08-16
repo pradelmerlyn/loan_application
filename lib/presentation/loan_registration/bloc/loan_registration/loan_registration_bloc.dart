@@ -11,9 +11,6 @@ import 'package:loan/domain/entities/borrower/borrower_info/borrower_entity.dart
 import 'package:loan/domain/entities/loan_registration/loan_registration_entity.dart';
 import 'package:loan/domain/entities/loan_registration/loan_registration_response_entity.dart';
 
-// Response validation helper (extension on entity)
-import 'package:loan/presentation/loan_registration/validators/response_validator.dart';
-
 // Single use case for both steps
 import 'package:loan/domain/use_case/loan_registration/submit_loan_use_case.dart'
     show SubmitLoanUseCase, SubmitApplicationParams;

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:loan/presentation/gross_monthly_income/screens/additional_income_screen.dart';
 import 'package:loan/presentation/widgets/ui/button_outlined.dart';
 import 'package:loan/presentation/widgets/ui/section_header_bar.dart';
 
