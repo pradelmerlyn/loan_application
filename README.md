@@ -1,6 +1,6 @@
 🚀 A Flutter mobile application that demonstrates a multi-step loan application process, from borrower details to financials and demographics. The app is designed with a clean, modern UI, form validation, and structured navigation.
 
-📱 Features
+## 📱 Features
 - Authentication & Onboarding
 - Login screen with “Apply Now” option
 - Option to choose Individual or Multiple Borrower applications
